@@ -144,3 +144,20 @@
     - created_at (datetime)
     - updated_at (datetime)
     - is_deleted (boolean)
+## 実装
+### Front
+- language
+    - TypeScript
+- flamework
+    - Next.js or React
+
+
+### Back
+- language
+    - Python
+- flamework
+    - FastAPI
+- API
+    - Gemini, OpenAI
+- DB
+    - MySQL
