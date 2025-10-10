@@ -1,14 +1,7 @@
-# ==============================
-# ベースイメージ
-# ==============================
 FROM python:3.12-slim
 
-# 作業ディレクトリ設定
 WORKDIR /app
 
-# ==============================
-# システム依存関係のインストール
-# ==============================
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       default-mysql-client \
@@ -19,31 +12,20 @@ RUN apt-get update \
       python3-venv \
  && rm -rf /var/lib/apt/lists/*
 
-# ==============================
-# uv のインストール（グローバル）
-# ==============================
+# uvをグローバルに入れる
 RUN pip install --no-cache-dir uv
 
-# ==============================
-# Python依存関係の同期
-# ==============================
-# プロジェクトメタだけ先にコピー（キャッシュを効かせるため）
+# 依存メタだけ先に（キャッシュ用）
 COPY pyproject.toml uv.lock* uv.toml* ./
 
-# ==============================
-# アプリケーション本体コピー
-# ==============================
-COPY app ./app
+# アプリ本体
+COPY . .
 
-# venv作成と依存パッケージのインストール
-RUN python -m venv .venv \
- && .venv/bin/python -m pip install --upgrade pip \
- && .venv/bin/python -m pip install --no-cache-dir .
+# .venv作成 + ロックに基づいて同期（devツールも入れるなら --all-groups）
+RUN uv venv .venv \
+ && uv sync --python .venv/bin/python \
+ && uv sync --python .venv/bin/python --extra dev
 
-# ==============================
-# 実行設定
-# ==============================
 EXPOSE 8000
-
-# FastAPI起動コマンド
-CMD [".venv/bin/python","-m","uvicorn","app.main:app","--host","0.0.0.0","--port","8000","--reload"]
+# uvicornは.venv配下に入っているのでパスを直指定
+CMD [".venv/bin/uvicorn","app.main:app","--host","0.0.0.0","--port","8000","--reload"]

@@ -14,9 +14,10 @@
 """
 
 import os
+from collections.abc import Generator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 # -------------------------------------------------------------
 # データベース接続設定
@@ -29,25 +30,33 @@ DB_PORT = os.getenv("DB_PORT", "3306")
 DB_NAME = os.getenv("DB_NAME")
 
 # 必須の環境変数が設定されているかを検証
-missing_vars = [var for var, val in [("DB_USER", DB_USER), ("DB_PASSWORD", DB_PASSWORD), ("DB_NAME", DB_NAME)] if not val]
+missing_vars = [
+    var
+    for var, val in [("DB_USER", DB_USER), ("DB_PASSWORD", DB_PASSWORD), ("DB_NAME", DB_NAME)]
+    if not val
+]
 if missing_vars:
     raise RuntimeError(f"Required environment variable(s) missing: {', '.join(missing_vars)}")
 # SQLAlchemy のデータベース URL を組み立て
-DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
+DATABASE_URL = (
+    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
+)
 
 
 # -------------------------------------------------------------
 # SQLAlchemy エンジン / セッション / ベースクラス
 # -------------------------------------------------------------
 
+
 class Base(DeclarativeBase):
     pass
+
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     """依存注入用の DB セッションジェネレータ
 
     FastAPI の Depends で使うためのジェネレータです。関数内でセッションを
@@ -62,10 +71,9 @@ def get_db():
     """
 
     db = SessionLocal()
+
     try:
         yield db
     finally:
         # 使用後にセッションを閉じてリソースを解放
         db.close()
-
-

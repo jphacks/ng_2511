@@ -21,6 +21,11 @@
   "python.analysis.autoImportCompletions": true,
   "python.analysis.inlayHints.variableTypes": true,
   "python.analysis.inlayHints.functionReturnTypes": true,
+  "editor.formatOnSave": true,
+  "python.linting.enabled": true,
+  "python.linting.lintOnSave": true,
+  "python.linting.pylintEnabled": true,
+  "ruff.enable": true,
 
   // TOML 関連の推奨設定
   "evenBetterTOML.validation.invalidType": "ignore"

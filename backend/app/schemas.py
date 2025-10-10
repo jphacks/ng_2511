@@ -1,5 +1,4 @@
-from pydantic import BaseModel
-
+from pydantic import BaseModel, ConfigDict
 
 # -------------------------------------------------------------
 # Pydantic スキーマ定義
@@ -63,12 +62,5 @@ class ItemOut(ItemBase):
     # DB の主キー（例: 自動採番された id）を含める
     id: int
 
-    class Config:
-        # SQLAlchemy のモデルインスタンスから属性を読み取るための設定
-        # Pydantic v2 では `from_attributes` を有効にすることで、ORM オブジェクト
-        # の属性 (e.g., obj.id, obj.name) を Pydantic に渡せます。
-        #
-        # 参考: FastAPI + SQLAlchemy の組み合わせでレスポンスモデルに ORM
-        # オブジェクトを直接渡す場合に便利です。
-        from_attributes = True  # SQLAlchemy -> Pydantic v2
-
+    # SQLAlchemy の ORM モデルから Pydantic モデルを生成する設定
+    model_config = ConfigDict(from_attributes=True)

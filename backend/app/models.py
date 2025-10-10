@@ -10,7 +10,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from .db import Base
 
-
 # -------------------------------------------------------------
 # SQLAlchemy 2 系の宣言的モデル定義
 #
@@ -32,6 +31,7 @@ from .db import Base
 # 使うことを推奨します。
 # -------------------------------------------------------------
 
+
 class Item(Base):
     """アイテムテーブルの ORM モデル
 
@@ -50,5 +50,3 @@ class Item(Base):
     # カラム定義（型注釈 + mapped_column）
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-
-
