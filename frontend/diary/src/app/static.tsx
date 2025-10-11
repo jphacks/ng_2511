@@ -1,0 +1,1 @@
+export const devUserImage = "/dev/user_image.png";
