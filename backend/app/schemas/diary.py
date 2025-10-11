@@ -10,7 +10,7 @@ class DiaryBase(BaseModel):
     レスポンスの共通部分として他のスキーマから継承して使います。
 
     属性:
-        content (str): 日記の内容。必須フィールド。
+        body (str): 日記の内容。必須フィールド。
     """
 
     body: str
@@ -27,6 +27,7 @@ class DiaryOut(DiaryBase):
 
     id: int
     user_id: int
+    score: int
     created_at: datetime | None
     updated_at: datetime | None
     is_deleted: bool

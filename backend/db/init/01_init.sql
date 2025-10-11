@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS diaries (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
   body TEXT NOT NULL,
+  score INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   is_deleted BOOLEAN DEFAULT FALSE,
@@ -34,5 +35,5 @@ CREATE TABLE IF NOT EXISTS images (
 
 INSERT INTO items (name) VALUES ('hello'), ('fastapi');
 INSERT INTO users (name, image_url) VALUES ('Alice', 'https://example.com/alice.jpg'), ('Bob', 'https://example.com/bob.jpg');
-INSERT INTO diaries (user_id, body) VALUES (1, 'This is Alice\'s first diary entry.'), (2, 'This is Bob\'s first diary entry.');
+INSERT INTO diaries (user_id, body, score) VALUES (1, 'This is Alice\'s first diary entry.', 10), (2, 'This is Bob\'s first diary entry.', 15);
 INSERT INTO images (user_id, uri) VALUES (1, 'https://example.com/alice1.jpg'), (2, 'https://example.com/bob1.jpg');

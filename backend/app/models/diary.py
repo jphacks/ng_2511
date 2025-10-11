@@ -21,6 +21,8 @@ class Diary(Base):
     )
     body: Mapped[str] = mapped_column(Text, nullable=False)
 
+    score: Mapped[int] = mapped_column(Integer, nullable=False)
+
     created_at: Mapped[datetime | None] = mapped_column(
         TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")
     )
