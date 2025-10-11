@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import not_, select
 from sqlalchemy.orm import Session
 
@@ -13,12 +13,15 @@ from app.utils import parse_date
 router = APIRouter(prefix="/diaries", tags=["diaries"])
 
 
+# TODO: is_deletedがFalseのものだけ返すようにする
 @router.get("/", response_model=list[DiaryOut])
 def read_diaries(db: Annotated[Session, Depends(get_db)]) -> Sequence[Diary]:
     """全日記取得"""
     try:
         diaries = db.execute(select(Diary)).scalars().all()
         return diaries
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -26,12 +29,21 @@ def read_diaries(db: Annotated[Session, Depends(get_db)]) -> Sequence[Diary]:
         ) from e
 
 
+# TODO: is_deletedがFalseのものだけ返すようにする
 @router.get("/{diary_id}", response_model=DiaryOut)
 def read_diary(diary_id: int, db: Annotated[Session, Depends(get_db)]) -> Diary:
-    diary = db.get(Diary, diary_id)
-    if diary is None:
-        raise HTTPException(status_code=404, detail="Diary not found")
-    return diary
+    try:
+        diary = db.get(Diary, diary_id)
+        if diary is None:
+            raise HTTPException(status_code=404, detail="Diary not found")
+        return diary
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching diary: {str(e)}",
+        ) from e
 
 
 @router.post("/", response_model=DiaryOut)
@@ -66,6 +78,8 @@ def create_diary(
         db.commit()
         db.refresh(diary)
         return diary
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -98,8 +112,36 @@ def update_diary(
         db.commit()
         db.refresh(diary)
         return diary
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Error updating diary: {str(e)}",
+        ) from e
+
+
+# responseは204 No Content
+@router.delete("/{diary_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_diary(
+    diary_id: int,
+    db: Annotated[Session, Depends(get_db)],
+) -> None:
+    try:
+        diary = Diary.active(db).filter(Diary.id == diary_id).first()
+        if diary is None:
+            raise HTTPException(status_code=404, detail="Diary not found")
+
+        # 論理削除
+        diary.is_deleted = True
+
+        db.add(diary)
+        db.commit()
+        return None
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error deleting diary: {str(e)}",
         ) from e
