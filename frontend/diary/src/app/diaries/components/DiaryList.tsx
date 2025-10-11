@@ -131,7 +131,12 @@ export default function DiaryList({ diaries, selectedDate }: DiaryListProps) {
 
             {/* コンテンツ部分 */}
             <div className="text-gray-700">
-              <p className="truncate">{truncateContent(diary.content)}</p>
+              {/* {selectedDate ? (
+                <p>{truncateContent(diary.content)}</p>
+              ) : (
+                <p className="truncate">{truncateContent(diary.content)}</p>
+              )} */
+                <p>{truncateContent(diary.content)}</p>}
             </div>
 
             {/* フッター */}
