@@ -28,3 +28,9 @@ docker-compose up --build
 ```bash
 mysql -u appuser -papp_pass -h db app_db
 ```
+
+## formatter linter を実行する場合
+
+```
+ruff check .
+```
