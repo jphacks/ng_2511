@@ -3,9 +3,9 @@
 import { useState } from 'react';
 
 interface CalendarProps {
-  diaryDates: string[]; // 日記が存在する日付の配列
-  selectedDate: string | null;
-  onDateSelect: (date: string | null) => void;
+  diaryDates: number[]; // 日記が存在する日付の配列
+  selectedDate: number | null;
+  onDateSelect: (date: number | null) => void;
 }
 
 export default function Calendar({ diaryDates, selectedDate, onDateSelect }: CalendarProps) {
@@ -34,9 +34,12 @@ export default function Calendar({ diaryDates, selectedDate, onDateSelect }: Cal
     current.setDate(current.getDate() + 1);
   }
 
-  // 日付を YYYY-MM-DD 形式にフォーマット
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];
+  // 日付を yyyymmdd の int に変換
+  const dateToInt = (date: Date) => {
+    const y = date.getFullYear();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    return parseInt(`${y}${m}${d}`);
   };
 
   // 日付が現在の月かどうかチェック
@@ -46,12 +49,12 @@ export default function Calendar({ diaryDates, selectedDate, onDateSelect }: Cal
 
   // 日記が存在する日付かどうかチェック
   const hasDiary = (date: Date) => {
-    return diaryDates.includes(formatDate(date));
+    return diaryDates.includes(dateToInt(date));
   };
 
   // 選択中の日付かどうかチェック
   const isSelected = (date: Date) => {
-    return selectedDate === formatDate(date);
+    return selectedDate === dateToInt(date);
   };
 
   // 前の月へ移動
@@ -66,10 +69,10 @@ export default function Calendar({ diaryDates, selectedDate, onDateSelect }: Cal
 
   // 日付をクリックした時の処理
   const handleDateClick = (date: Date) => {
-    const dateStr = formatDate(date);
+    const dateInt = dateToInt(date);
     // 現在の月の日付のみ選択可能
     if (isCurrentMonth(date)) {
-      onDateSelect(selectedDate === dateStr ? null : dateStr);
+      onDateSelect(selectedDate === dateInt ? null : dateInt);
     }
   };
 

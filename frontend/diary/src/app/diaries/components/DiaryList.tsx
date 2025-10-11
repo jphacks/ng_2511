@@ -5,14 +5,16 @@ import { DiaryEntry } from '../../../data/mockDiaries';
 
 interface DiaryListProps {
   diaries: DiaryEntry[];
-  selectedDate: string | null;
-  onDateSelect?: (date: string) => void;
+  selectedDate: number | null;
+  onDateSelect?: (date: number) => void;
+  intToDateString: (dateInt: number) => string;
 }
 
-export default function DiaryList({ diaries, selectedDate, onDateSelect }: DiaryListProps) {
-  // 日付を日本語形式でフォーマット
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+export default function DiaryList({ diaries, selectedDate, onDateSelect, intToDateString }: DiaryListProps) {
+  // 日付を日本語形式でフォーマット（int型日付→YYYY-MM-DD→Date→日本語）
+  const formatDate = (dateInt: number) => {
+    const s = intToDateString(dateInt);
+    const date = new Date(s);
     return date.toLocaleDateString('ja-JP', {
       year: 'numeric',
       month: 'long',
