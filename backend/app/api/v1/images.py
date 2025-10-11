@@ -11,7 +11,6 @@ from app.api.deps import get_db
 from app.models.image import Image
 from app.schemas.image import ImageOut
 
-# TODO: 後で絶対変える
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
     api_key=os.getenv("CLOUDINARY_API_KEY"),
