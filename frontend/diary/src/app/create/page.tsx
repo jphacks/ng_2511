@@ -3,9 +3,21 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Diary } from "../edit/[date]/type";
 
-export default function HomePage() {
-  const [diaryText, setDiaryText] = useState("");
+interface HomePageProps {
+  diary: Diary;
+  isEdit: boolean;
+}
+
+export default function HomePage({ diary, isEdit }: HomePageProps = { diary: { id: 0, date: "", body: "" }, isEdit: false }) {
+  if (!diary) {
+    diary = { id: 0, date: "", body: "" };
+  }
+  if (!isEdit) {
+    isEdit = false;
+  }
+  const [diaryText, setDiaryText] = useState(diary.body);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
   const [score, setScore] = useState<number | null>(null);
@@ -13,7 +25,8 @@ export default function HomePage() {
   const [isGenerating, setIsGenerating] = useState(false); //  画像生成中フラグを追加
 
   const today = new Date();
-  const [date, setDate] = useState<Date>(today);
+  const defaultDateObj = diary.date ? new Date(diary.date) : today;
+  const [date, setDate] = useState<Date>(defaultDateObj);
 
   // バックエンドから最新の画像を取得
   const fetchImage = async () => {
@@ -45,16 +58,28 @@ export default function HomePage() {
       setIsGenerating(true); //  送信開始時に「生成中」に設定
       setMessageType("success");
       setMessage("日記を送信中です...");
-
-      const response = await fetch("http://localhost:8000/api/v1/diaries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          body: diaryText,
-          date: date.toISOString().split("T")[0],
-        }),
-      });
-
+      
+      let response;
+      if (!isEdit) {
+        response = await fetch("http://localhost:8000/api/v1/diaries", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            "body": diaryText,
+            "date": Number(date.toISOString().split("T")[0].replace(/-/g, "")),
+          }),
+        });
+      } else {
+        response = await fetch(`http://localhost:8000/api/v1/diaries/${diary.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            body: diaryText,
+            date: Number(date.toISOString().split("T")[0].replace(/-/g, "")),
+          })
+        })
+      };
+      console.log(diaryText);
       if (!response.ok) throw new Error("APIリクエストに失敗しました");
       const data = await response.json();
 
