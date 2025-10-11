@@ -5,13 +5,16 @@ import { DiaryEntry } from '../../../data/mockDiaries';
 
 interface DiaryListProps {
   diaries: DiaryEntry[];
-  selectedDate: string | null;
+  selectedDate: number | null;
+  onDateSelect?: (date: number) => void;
+  intToDateString: (dateInt: number) => string;
 }
 
-export default function DiaryList({ diaries, selectedDate }: DiaryListProps) {
-  // 日付を日本語形式でフォーマット
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+export default function DiaryList({ diaries, selectedDate, onDateSelect, intToDateString }: DiaryListProps) {
+  // 日付を日本語形式でフォーマット（int型日付→YYYY-MM-DD→Date→日本語）
+  const formatDate = (dateInt: number) => {
+    const s = intToDateString(dateInt);
+    const date = new Date(s);
     return date.toLocaleDateString('ja-JP', {
       year: 'numeric',
       month: 'long',
@@ -84,7 +87,8 @@ export default function DiaryList({ diaries, selectedDate }: DiaryListProps) {
         {diaries.map((diary) => (
           <div
             key={diary.id}
-            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
+            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white cursor-pointer"
+            onClick={() => onDateSelect && onDateSelect(diary.date)}
           >
             {/* ヘッダー部分 */}
             <div className="flex justify-between items-start mb-3">
@@ -131,7 +135,7 @@ export default function DiaryList({ diaries, selectedDate }: DiaryListProps) {
 
             {/* コンテンツ部分 */}
             <div className="text-gray-700">
-              <p className="truncate">{truncateContent(diary.content)}</p>
+              <p>{truncateContent(diary.content)}</p>
             </div>
 
             {/* フッター */}

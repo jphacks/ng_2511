@@ -6,9 +6,16 @@ import Calendar from './components/Calendar';
 import DiaryList from './components/DiaryList';
 import { DiaryEntry, mockDiaries, getDiaryDates, sortDiariesByDate } from '../../data/mockDiaries';
 
+
+// int型日付をYYYY-MM-DD文字列に変換
+function intToDateString(dateInt: number): string {
+  const s = dateInt.toString();
+  return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
+}
+
 export default function DiariesPage() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [filteredDiaries, setFilteredDiaries] = useState<DiaryEntry[]>([]);
 
   useEffect(() => {
@@ -19,7 +26,7 @@ export default function DiariesPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedDate) {
+    if (selectedDate !== null) {
       const filtered = diaries.filter(diary => diary.date === selectedDate);
       setFilteredDiaries(filtered);
     } else {
@@ -30,7 +37,7 @@ export default function DiariesPage() {
   // 日記が存在する日付の配列を作成
   const diaryDates = getDiaryDates();
 
-  const handleDateSelect = (date: string | null) => {
+  const handleDateSelect = (date: number | null) => {
     setSelectedDate(date);
   };
 
@@ -84,6 +91,8 @@ export default function DiariesPage() {
             <DiaryList
               diaries={filteredDiaries}
               selectedDate={selectedDate}
+              onDateSelect={handleDateSelect}
+              intToDateString={intToDateString}
             />
           </div>
         </div>
