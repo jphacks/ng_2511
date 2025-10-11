@@ -1,0 +1,49 @@
+{
+  "name": "JPHacks",
+  "dockerComposeFile": ["../compose.yml"],
+  "service": "api",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "ms-azuretools.vscode-docker",
+        "ms-python.mypy-type-checker"
+      ],
+      "settings": {
+        // コンテナ内の Python を使う（postCreateCommand で作る venv）
+        "python.defaultInterpreterPath": "/app/.venv/bin/python",
+
+        // 型チェック（必要なら "strict" に）
+        "python.analysis.typeCheckingMode": "basic",
+
+        // 保存時に自動整形 & Lint & import整列（Ruffに一元化）
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll": true,
+          "source.organizeImports": true
+        },
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+
+        "ruff.enable": true,
+        // mypy 設定（プロジェクト側の pyproject.toml を参照）
+        "mypy-type-checker.args": ["--config-file", "pyproject.toml"]
+      }
+    }
+  },
+
+  // venv を用意し、依存とツールをインストール
+  "postCreateCommand": "python -m venv .venv && . .venv/bin/activate && pip install -U pip && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi && pip install ruff mypy",
+
+  "forwardPorts": [8000],
+
+  // 任意：ビルド後にPIPの余計なチェックを抑止
+  "remoteEnv": {
+    "PIP_DISABLE_PIP_VERSION_CHECK": "1"
+  }
+}
