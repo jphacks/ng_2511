@@ -43,7 +43,7 @@ export default function DiariesPage() {
             日記一覧
           </h1>
           <Link
-            href="/diaries/new"
+            href="/create"
             className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

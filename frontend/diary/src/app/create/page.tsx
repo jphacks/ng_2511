@@ -26,7 +26,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   try {
     //  FastAPI の API に送信
-    const response = await fetch("http://localhost:8000/diaries/create", {
+    const response = await fetch("http://localhost:8000/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

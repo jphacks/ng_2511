@@ -9,7 +9,7 @@ export default function Navigation() {
   const navItems = [
     { href: '/', label: 'ホーム', icon: 'home' },
     { href: '/diaries', label: '日記一覧', icon: 'list' },
-    { href: '/diaries/new', label: '新規作成', icon: 'plus' },
+    { href: '/create', label: '新規作成', icon: 'plus' },
   ];
 
   const getIcon = (iconName: string) => {
