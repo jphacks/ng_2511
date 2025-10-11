@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Calendar from './components/Calendar';
 import DiaryList from './components/DiaryList';
-import { DiaryEntry, mockDiaries, getDiaryDates, sortDiariesByDate } from '../../data/mockDiaries';
+import { DiaryEntry, fetchDiaries, getDiaryDates, sortDiariesByDate } from './api';
 
 
 // int型日付をYYYY-MM-DD文字列に変換
@@ -17,12 +17,28 @@ export default function DiariesPage() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [filteredDiaries, setFilteredDiaries] = useState<DiaryEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // 実際の実装ではAPIからデータを取得
-    const sortedDiaries = sortDiariesByDate(mockDiaries);
-    setDiaries(sortedDiaries);
-    setFilteredDiaries(sortedDiaries);
+    // APIから日記データを取得
+    const loadDiaries = async () => {
+      try {
+        setLoading(true);
+        const fetchedDiaries = await fetchDiaries();
+        const sortedDiaries = sortDiariesByDate(fetchedDiaries);
+        setDiaries(sortedDiaries);
+        setFilteredDiaries(sortedDiaries);
+        setError(null);
+      } catch (err) {
+        console.error('Error loading diaries:', err);
+        setError('日記の読み込みに失敗しました');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDiaries();
   }, []);
 
   useEffect(() => {
@@ -35,11 +51,43 @@ export default function DiariesPage() {
   }, [selectedDate, diaries]);
 
   // 日記が存在する日付の配列を作成
-  const diaryDates = getDiaryDates();
+  const diaryDates = getDiaryDates(diaries);
 
   const handleDateSelect = (date: number | null) => {
     setSelectedDate(date);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">日記を読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            再読み込み
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
