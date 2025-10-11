@@ -84,6 +84,7 @@ export default function DiariesPage() {
             <DiaryList
               diaries={filteredDiaries}
               selectedDate={selectedDate}
+              onDateSelect={handleDateSelect}
             />
           </div>
         </div>

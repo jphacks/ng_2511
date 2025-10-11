@@ -6,9 +6,10 @@ import { DiaryEntry } from '../../../data/mockDiaries';
 interface DiaryListProps {
   diaries: DiaryEntry[];
   selectedDate: string | null;
+  onDateSelect?: (date: string) => void;
 }
 
-export default function DiaryList({ diaries, selectedDate }: DiaryListProps) {
+export default function DiaryList({ diaries, selectedDate, onDateSelect }: DiaryListProps) {
   // 日付を日本語形式でフォーマット
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -84,7 +85,8 @@ export default function DiaryList({ diaries, selectedDate }: DiaryListProps) {
         {diaries.map((diary) => (
           <div
             key={diary.id}
-            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
+            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white cursor-pointer"
+            onClick={() => onDateSelect && onDateSelect(diary.date)}
           >
             {/* ヘッダー部分 */}
             <div className="flex justify-between items-start mb-3">
