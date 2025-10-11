@@ -7,8 +7,8 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from .db import Base, engine, get_db
-from .models import Item
-from .schemas import ItemCreate, ItemOut
+from .models import Item, Diary
+from .schemas import ItemCreate, ItemOut, DiaryOut
 
 
 @asynccontextmanager
@@ -41,6 +41,19 @@ def read_items(db: Annotated[Session, Depends(get_db)]) -> Sequence[Item]:
     try:
         items = db.execute(select(Item)).scalars().all()
         return items
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching items: {str(e)}",
+        ) from e
+
+
+@app.get("/diaries", response_model=list[DiaryOut])
+def read_diaries(db: Annotated[Session, Depends(get_db)]) -> Sequence[Diary]:
+    """全日記取得"""
+    try:
+        diaries = db.execute(select(Diary)).scalars().all()
+        return diaries
     except Exception as e:
         raise HTTPException(
             status_code=500,
