@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
-from sqlalchemy import TIMESTAMP, Boolean, ForeignKey, Index, Integer, Text, text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import TIMESTAMP, Boolean, ForeignKey, Index, Integer, Text, not_, text
+from sqlalchemy.orm import Mapped, Query, Session, mapped_column, relationship
 
 from app.db import Base
 
 if TYPE_CHECKING:
     from .user import User
+
+TD = TypeVar("TD", bound="Diary")
 
 
 class Diary(Base):
@@ -43,3 +45,7 @@ class Diary(Base):
 
     def __repr__(self) -> str:
         return f"Diary(id={self.id!r}, user_id={self.user_id!r})"
+
+    @classmethod
+    def active(cls: type[TD], session: Session) -> Query[TD]:
+        return session.query(cls).filter(not_(cls.is_deleted))
