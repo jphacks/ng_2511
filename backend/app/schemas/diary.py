@@ -16,6 +16,22 @@ class DiaryBase(BaseModel):
     body: str
 
 
+class DiaryCreate(DiaryBase):
+    """日記作成用スキーマ
+
+    DiaryCreate はクライアントからの新規日記作成リクエストを検証するためのスキーマです。
+    必須フィールドをここに含めます。
+
+    属性:
+        body (str): 日記の内容。必須フィールド。
+        date (int): 日記の日付（Unixタイムスタンプ）。必須フィールド。
+    """
+
+    date: int  # Unixタイムスタンプ
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class DiaryOut(DiaryBase):
     """レスポンス用スキーマ（日記出力）
 
