@@ -23,10 +23,16 @@ docker compose up --build
 
 ## CLI で mysql に接続する方法
 
-- 基本的には ORM を使うので CLI で接続する必要はありませんが、DB の中身を直接確認したい場合などに使います。
-
 ```bash
-mysql -u appuser -papp_pass -h db app_db
+mysql -u appuser -papp_pass -h db app_db --ssl=0
+```
+
+## db の更新
+
+- mysql に接続した後にこのコマンドを打つ必要がある
+
+```mysql
+source ./db/init/01_init.sql;
 ```
 
 ## formatter linter を実行する場合
