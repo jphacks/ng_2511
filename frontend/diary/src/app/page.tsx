@@ -9,7 +9,7 @@ export default function HomePage() {
       <p className="text-gray-600 mb-8">あなたの日々の記録を残しましょう。</p>
 
       <Link
-        href="/diaries/create"
+        href="/diary/create"
         className="bg-blue-600 text-white px-5 py-3 rounded-lg text-lg hover:bg-blue-700 transition"
       >
         新しい日記を書く
