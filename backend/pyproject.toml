@@ -18,7 +18,7 @@ dependencies = [
   "pydantic>=2.8.0",
   "watchfiles>=0.21.0",
   "cloudinary>=1.44.1",
-  "python-multipart>=0.0.20",,
+  "python-multipart>=0.0.20",
   "google-genai>=1.43.0",
   "python-dotenv>=1.1.1",
 ]
