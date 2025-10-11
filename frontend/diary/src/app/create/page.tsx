@@ -30,7 +30,7 @@ export default function HomePage() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/create", {
+      const response = await fetch("http://localhost:8000/api/v1/diaries", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

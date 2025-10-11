@@ -28,7 +28,7 @@ export interface DiaryEntry {
 // APIから日記一覧を取得
 export async function fetchDiaries(): Promise<DiaryEntry[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/diaries`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/diaries`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
