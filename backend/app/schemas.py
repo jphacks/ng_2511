@@ -39,8 +39,8 @@ class DiaryBase(BaseModel):
 
     属性:
         id (int): 日記のID。必須フィールド。
-        user_id (int): ユーザID。
-        body (text): 日記の内容。
+        user_id (int): ユーザID。必須フィールド。
+        body (text): 日記の内容。必須フィールド。
         score (int): 日記の内容についてのスコア。
         created_at (datetime): 作成日時。
         updated_at (datetime): 更新日時。
@@ -53,8 +53,8 @@ class DiaryBase(BaseModel):
     user_id: int
     body: str
     score: int
-    created_at: str | None
-    updated_at: str | None
+    created_at: datetime | None
+    updated_at: datetime | None
     is_deleted: bool
 
 
@@ -112,8 +112,8 @@ class DiaryOut(DiaryBase):
     user_id: int
     body: str
     score: int
-    created_at: str | None
-    updated_at: str | None
+    created_at: datetime | None
+    updated_at: datetime | None
     is_deleted: bool
 
     # SQLAlchemy の ORM モデルから Pydantic モデルを生成する設定
