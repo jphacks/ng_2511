@@ -1,14 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function HomePage() {
-  // ---- 状態管理 ----
   const [diaryText, setDiaryText] = useState("");
   const [message, setMessage] = useState("");
   const [score, setScore] = useState<number>(70);
 
-  // デモ用：スコア変化（後でAPIと連携予定）
+  // 今日の日付を "YYYY-MM-DD" 形式で取得して Date に変換
+  const today = new Date();
+  const [date, setDate] = useState<Date>(today);
+
+  // デモ用スコア変化
   useEffect(() => {
     const interval = setInterval(() => {
       setScore((s) => (s > 90 ? 30 : s + 10));
@@ -16,53 +21,49 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  // 日記送信処理（仮）
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!diaryText.trim()) {
-    setMessage("日記を入力してください。");
-    return;
-  }
-
-  try {
-    //  FastAPI の API に送信
-    const response = await fetch("http://localhost:8000/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        body: diaryText, // ← FastAPI が受け取るキー名をここで指定
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("APIリクエストに失敗しました");
+  // 日記送信処理
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!diaryText.trim()) {
+      setMessage("日記を入力してください。");
+      return;
     }
 
-    const data = await response.json();
+    try {
+      const response = await fetch("http://localhost:8000/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          body: diaryText,
+          date: date.toISOString().split("T")[0], // ← Date型を文字列化
+        }),
+      });
 
-    // サーバー側がスコアなどを返す想定
-    if (data.score !== undefined) {
-      setScore(data.score);
+      if (!response.ok) {
+        throw new Error("APIリクエストに失敗しました");
+      }
+
+      const data = await response.json();
+      if (data.score !== undefined) setScore(data.score);
+
+      setMessage("日記が保存されました！");
+      setDiaryText("");
+    } catch (error) {
+      console.error(error);
+      setMessage("日記の送信に失敗しました。");
     }
+  };
 
-    setMessage("日記が保存されました！");
-    setDiaryText("");
-  } catch (error) {
-    console.error(error);
-    setMessage("日記の送信に失敗しました。");
-  }
-};
-
-  // スコアに応じたスタイル変化
+  // スコアに応じた見た目
   const frameStyle =
     score >= 70
       ? "border-green-400 shadow-green-200"
       : score >= 40
       ? "border-yellow-400 shadow-yellow-200"
       : "border-red-400 shadow-red-200";
-  // スコアに応じた画像変化
+
   const imageSrc =
     score >= 70
       ? "/images/future_positive.png"
@@ -71,7 +72,6 @@ const handleSubmit = async (e: React.FormEvent) => {
       : "/images/future_negative.png";
 
   return (
-    // layout.tsx の中に包まれて表示される部分
     <main className="flex flex-1 items-start justify-center gap-8 px-12 py-8 bg-gray-50">
       {/* 左：未来の自分 */}
       <div className="w-1/2 flex flex-col items-center gap-4">
@@ -101,8 +101,36 @@ const handleSubmit = async (e: React.FormEvent) => {
 
       {/* 右：日記フォーム */}
       <div className="w-1/2 max-w-lg bg-white p-6 rounded-xl shadow-md border border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">日記を入力</h2>
+        {/* タイトル行 */}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-gray-800">日記を入力</h2>
 
+          {/* ✅ react-datepicker */}
+        <DatePicker
+        selected={date}
+        onChange={(d) => d && setDate(d)}
+        dateFormat="yyyy-MM-dd"
+        customInput={
+            <input
+            value={date instanceof Date ? date.toISOString().split("T")[0] : ""}
+            onChange={(e) => {
+                const newDate = new Date(e.target.value);
+                if (!isNaN(newDate.getTime())) {
+                setDate(newDate); // 有効な日付だけ更新
+                }
+            }}
+            className="border border-gray-300 rounded-lg px-3 py-1 text-gray-700 text-sm 
+                        focus:ring-2 focus:ring-indigo-400 outline-none 
+                        hover:border-indigo-400 hover:bg-indigo-50 hover:shadow-sm hover:shadow-indigo-100 
+                        cursor-pointer transition duration-200"
+            placeholder="YYYY-MM-DD"
+            />
+        }
+        />
+
+        </div>
+
+        {/* フォーム本体 */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <textarea
             value={diaryText}
@@ -114,15 +142,14 @@ const handleSubmit = async (e: React.FormEvent) => {
 
           <button
             type="submit"
-            className="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-lg font-semibold transition"
+            className="w-full bg-indigo-500 text-white py-2 rounded-lg font-semibold 
+                       transition duration-200
+                       hover:bg-indigo-600 hover:shadow-md hover:shadow-indigo-200 
+                       cursor-pointer"
           >
             保存
           </button>
         </form>
-
-        {message && (
-          <p className="text-sm text-green-600 mt-3 text-center">{message}</p>
-        )}
       </div>
     </main>
   );
