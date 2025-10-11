@@ -128,3 +128,18 @@ def delete_item(item_id: int, db: Annotated[Session, Depends(get_db)]) -> None:
             status_code=500,
             detail=f"Error deleting item: {str(e)}",
         ) from e
+
+
+@app.get("/diaries/{diary_id}", response_model=DiaryOut)
+def read_diary(diary_id: int, db: Annotated[Session, Depends(get_db)]) -> Diary:
+    """単一の日記取得"""
+    try:
+        diary = db.get(Diary, diary_id)
+        if diary is None:
+            raise HTTPException(status_code=404, detail="Diary not found")
+        return diary
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching diary: {str(e)}",
+        ) from e

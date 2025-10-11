@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime
+
 from sqlalchemy import (
     TIMESTAMP,
     Boolean,
@@ -38,10 +40,10 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     image_url: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    created_at: Mapped[str | None] = mapped_column(
+    created_at: Mapped[datetime | None] = mapped_column(
         TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")
     )
-    updated_at: Mapped[str | None] = mapped_column(
+    updated_at: Mapped[datetime | None] = mapped_column(
         TIMESTAMP,
         server_default=text("CURRENT_TIMESTAMP"),
         server_onupdate=text("CURRENT_TIMESTAMP"),
@@ -82,10 +84,10 @@ class Diary(Base):
     )
     body: Mapped[str] = mapped_column(Text, nullable=False)
 
-    created_at: Mapped[str | None] = mapped_column(
+    created_at: Mapped[datetime | None] = mapped_column(
         TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")
     )
-    updated_at: Mapped[str | None] = mapped_column(
+    updated_at: Mapped[datetime | None] = mapped_column(
         TIMESTAMP,
         server_default=text("CURRENT_TIMESTAMP"),
         server_onupdate=text("CURRENT_TIMESTAMP"),
@@ -116,10 +118,10 @@ class Image(Base):
     )
     uri: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    created_at: Mapped[str | None] = mapped_column(
+    created_at: Mapped[datetime | None] = mapped_column(
         TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")
     )
-    updated_at: Mapped[str | None] = mapped_column(
+    updated_at: Mapped[datetime | None] = mapped_column(
         TIMESTAMP,
         server_default=text("CURRENT_TIMESTAMP"),
         server_onupdate=text("CURRENT_TIMESTAMP"),
