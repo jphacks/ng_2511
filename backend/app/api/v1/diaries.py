@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.models.diary import Diary
 from app.schemas.diary import DiaryBase, DiaryCreate, DiaryOut
-from app.utils.parse_date import parse_date
+from app.utils.date import parse_date
 from app.utils.scoring import generate_diary_score_using_Gemini
 
 router = APIRouter(prefix="/diaries", tags=["diaries"])
