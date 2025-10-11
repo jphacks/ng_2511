@@ -29,6 +29,33 @@ class ItemBase(BaseModel):
     name: str
 
 
+class DiaryBase(BaseModel):
+    """日記共通のベーススキーマ
+
+    ここには、日記に共通するフィールドを置きます。リクエストの検証や
+    レスポンスの共通部分として他のスキーマから継承して使います。
+
+    属性:
+        id (int): 日記のID。必須フィールド。
+        user_id (int): ユーザID。
+        body (text): 日記の内容。
+        score (int): 日記の内容についてのスコア。
+        created_at (datetime): 作成日時。
+        updated_at (datetime): 更新日時。
+        is_deleted (bool): 削除フラグ。
+    """
+
+    # 単純な文字列フィールド。ここで型を宣言することで Pydantic が
+    # 自動でバリデーション（例えば必須チェックや型チェック）を行います。
+    id: int
+    user_id: int
+    body: str
+    score: int
+    created_at: str | None
+    updated_at: str | None
+    is_deleted: bool
+
+
 class ItemCreate(ItemBase):
     """POST /items 用のスキーマ（作成リクエスト）
 
@@ -61,6 +88,31 @@ class ItemOut(ItemBase):
 
     # DB の主キー（例: 自動採番された id）を含める
     id: int
+
+    # SQLAlchemy の ORM モデルから Pydantic モデルを生成する設定
+    model_config = ConfigDict(from_attributes=True)
+
+
+class DiaryOut(DiaryBase):
+    """レスポンス用スキーマ（出力）
+
+    DiaryOut はサーバーがクライアントに返す日記表現を定義します。
+    DB の主キー `id` や、内部でのみ管理しているフィールドをここに含めます。
+
+    注意: SQLAlchemy のオブジェクトを Pydantic モデルに変換する際、属性名が
+    Pydantic の期待と一致する必要があります。`from_attributes = True` を
+    Config に設定することで、オブジェクトの属性から値を読み取れるように
+    なります（Pydantic v2 の設定）。
+    """
+
+    # DB の主キー（例: 自動採番された id）を含める
+    id: int
+    user_id: int
+    body: str
+    score: int
+    created_at: str | None
+    updated_at: str | None
+    is_deleted: bool
 
     # SQLAlchemy の ORM モデルから Pydantic モデルを生成する設定
     model_config = ConfigDict(from_attributes=True)
