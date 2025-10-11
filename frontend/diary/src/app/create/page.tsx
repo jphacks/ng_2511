@@ -60,25 +60,26 @@ export default function HomePage({ diary, isEdit }: HomePageProps = { diary: { i
       setMessage("日記を送信中です...");
       
       let response;
-      if (isEdit) {
+      if (!isEdit) {
         response = await fetch("http://localhost:8000/api/v1/diaries", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            body: diaryText,
-            date: date.toISOString().split("T")[0],
+            "body": diaryText,
+            "date": Number(date.toISOString().split("T")[0].replace(/-/g, "")),
           }),
         });
       } else {
         response = await fetch(`http://localhost:8000/api/v1/diaries/${diary.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          body: diaryText,
-          date: date.toISOString().split("T")[0],
-        }),
-      });}
-
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            body: diaryText,
+            date: Number(date.toISOString().split("T")[0].replace(/-/g, "")),
+          })
+        })
+      };
+      console.log(diaryText);
       if (!response.ok) throw new Error("APIリクエストに失敗しました");
       const data = await response.json();
 

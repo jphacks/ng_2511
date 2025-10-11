@@ -43,6 +43,7 @@ export default function EditPage() {
   if (error) return <p>エラーが発生しました: {error}</p>;
   if (!diary) return <p>読み込み中...</p>;
   diary.date = intToDateString(Number(date));
+  console.log(diary);
     return (
         <HomePage diary={diary || { id: 0, date: "", body: "" }} isEdit={true} />
     );
