@@ -1,0 +1,14 @@
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"        # Next.js 開発サーバポート
+    volumes:
+      - ./diary:/usr/src/app
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # ホストファイル変更を監視
+      
