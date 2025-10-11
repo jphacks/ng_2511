@@ -27,7 +27,7 @@ class DiaryCreate(DiaryBase):
         date (int): 日記の日付（Unixタイムスタンプ）。必須フィールド。
     """
 
-    date: int  # Unixタイムスタンプ
+    date: int  # 8桁のYYYYMMDD形式
 
     model_config = ConfigDict(from_attributes=True)
 
