@@ -4,6 +4,7 @@ import "./globals.css";
 import { ReactNode, useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
+import { devUserImage } from "./static";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -25,11 +26,18 @@ function Header() {
     const fetchImage = async () => {
       try {
         const res = await fetch("/image", { method: "GET" });
-        if (!res.ok) throw new Error("画像取得に失敗しました");
+        // if (!res.ok) throw new Error("画像取得に失敗しました");
+        if (!res.ok){
+          // 開発環境ならdevUserImageを使う
+          const url = devUserImage;
+          setImageUrl(url);
+          return;
+        }
 
         // 画像のURLを生成（Blob → object URL）
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
+        
         setImageUrl(url);
       } catch (err) {
         console.error(err);
