@@ -145,3 +145,19 @@ def delete_diary(
             status_code=500,
             detail=f"Error deleting diary: {str(e)}",
         ) from e
+
+
+@router.get("/date/{date}", response_model=DiaryOut)
+def read_diary_by_date(date: int, db: Annotated[Session, Depends(get_db)]) -> Diary:
+    try:
+        diary = db.query(Diary).filter(Diary.date == date, not_(Diary.is_deleted)).first()
+        if diary is None:
+            raise HTTPException(status_code=404, detail="Diary not found")
+        return diary
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching diary: {str(e)}",
+        ) from e
