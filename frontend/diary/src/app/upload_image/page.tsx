@@ -29,7 +29,7 @@ export default function UploadPage() {
     formData.append("email", email);
 
     try {
-      const response = await fetch("/image/upload", {
+      const response = await fetch("http://localhost:8000/api/v1/image/upload", {
         method: "POST",
         body: formData,
       });
