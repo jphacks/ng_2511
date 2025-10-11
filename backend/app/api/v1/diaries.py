@@ -8,7 +8,8 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.models.diary import Diary
 from app.schemas.diary import DiaryBase, DiaryCreate, DiaryOut
-from app.utils import parse_date
+from app.utils.parse_date import parse_date
+from app.utils.scoring import generate_diary_score_using_Gemini
 
 router = APIRouter(prefix="/diaries", tags=["diaries"])
 
@@ -69,7 +70,7 @@ def create_diary(
             raise HTTPException(status_code=400, detail="Diary for this date already exists")
 
         # 日記の内容を元にスコアを計算
-        score = len(diary_in.body)  # 仮のスコア計算
+        score: int = generate_diary_score_using_Gemini(diary_in.body)
 
         user_id = 1  # 仮のユーザーID
 
