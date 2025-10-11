@@ -51,7 +51,7 @@ function Header() {
     <header className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
       <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-3">
         {/* 左側：アイコン＋サービス名 */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/diaries" className="flex items-center gap-2">
           <span className="text-blue-600 text-2xl">📝</span>
           <span className="font-semibold text-lg">My Diary</span>
         </Link>
@@ -75,13 +75,6 @@ function Header() {
 
             {open && (
               <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-md py-2">
-                <Link
-                  href="/"
-                  className="block px-4 py-2 text-sm hover:bg-gray-100"
-                  onClick={() => setOpen(false)}
-                >
-                  ホーム
-                </Link>
                 <Link
                   href="/create"
                   className="block px-4 py-2 text-sm hover:bg-gray-100"
