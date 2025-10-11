@@ -43,3 +43,13 @@ source ./db/init/01_init.sql;
 ```
 ruff check .
 ```
+## Gemini関連を実行する場合
+1.環境
+```bash
+uv add google-genai
+uv add Pillow
+```
+2..envに入れるもの
+```
+GEMINI_API_KEY=Slackで確認、最後に送ったものを使う
+```
