@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import not_, select
+from sqlalchemy import not_
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
@@ -14,12 +14,11 @@ from app.utils.scoring import generate_diary_score_using_Gemini
 router = APIRouter(prefix="/diaries", tags=["diaries"])
 
 
-# TODO: is_deletedがFalseのものだけ返すようにする
 @router.get("/", response_model=list[DiaryOut])
 def read_diaries(db: Annotated[Session, Depends(get_db)]) -> Sequence[Diary]:
     """全日記取得"""
     try:
-        diaries = db.execute(select(Diary)).scalars().all()
+        diaries = db.query(Diary).filter(not_(Diary.is_deleted)).all()
         return diaries
     except HTTPException:
         raise
@@ -30,11 +29,10 @@ def read_diaries(db: Annotated[Session, Depends(get_db)]) -> Sequence[Diary]:
         ) from e
 
 
-# TODO: is_deletedがFalseのものだけ返すようにする
 @router.get("/{diary_id}", response_model=DiaryOut)
 def read_diary(diary_id: int, db: Annotated[Session, Depends(get_db)]) -> Diary:
     try:
-        diary = db.get(Diary, diary_id)
+        diary = db.query(Diary).filter(Diary.id == diary_id, not_(Diary.is_deleted)).first()
         if diary is None:
             raise HTTPException(status_code=404, detail="Diary not found")
         return diary
@@ -144,4 +142,20 @@ def delete_diary(
         raise HTTPException(
             status_code=500,
             detail=f"Error deleting diary: {str(e)}",
+        ) from e
+
+
+@router.get("/date/{date}", response_model=DiaryOut)
+def read_diary_by_date(date: int, db: Annotated[Session, Depends(get_db)]) -> Diary:
+    try:
+        diary = db.query(Diary).filter(Diary.date == date, not_(Diary.is_deleted)).first()
+        if diary is None:
+            raise HTTPException(status_code=404, detail="Diary not found")
+        return diary
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching diary: {str(e)}",
         ) from e

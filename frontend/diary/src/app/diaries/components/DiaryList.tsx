@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { DiaryEntry } from '../../../data/mockDiaries';
+import { DiaryEntry } from '../api';
 
 interface DiaryListProps {
   diaries: DiaryEntry[];
@@ -25,6 +25,18 @@ export default function DiaryList({ diaries, selectedDate, onDateSelect, intToDa
 
   // 作成日時をフォーマット
   const formatCreatedAt = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // 更新日時をフォーマット
+  const formatUpdatedAt = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('ja-JP', {
       year: 'numeric',
@@ -105,9 +117,9 @@ export default function DiaryList({ diaries, selectedDate, onDateSelect, intToDa
                   </span>
                   <span className="flex items-center gap-1">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    {formatCreatedAt(diary.createdAt)}
+                    更新: {formatUpdatedAt(diary.updatedAt)}
                   </span>
                 </div>
               </div>
