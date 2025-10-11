@@ -104,8 +104,7 @@ def update_diary(
         # それ以外は変更不可
 
         # bodyを下にscoreを再計算
-        # TODO: ここにスコア計算の処理を書く
-        score = len(diary.body)  # 仮のスコア計算
+        score: int = generate_diary_score_using_Gemini(diary.body)
 
         diary.score = score
 
