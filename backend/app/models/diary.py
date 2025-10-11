@@ -3,7 +3,17 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, TypeVar
 
-from sqlalchemy import TIMESTAMP, Boolean, ForeignKey, Index, Integer, Text, not_, text
+from sqlalchemy import (
+    TIMESTAMP,
+    Boolean,
+    CheckConstraint,
+    ForeignKey,
+    Index,
+    Integer,
+    Text,
+    not_,
+    text,
+)
 from sqlalchemy.orm import Mapped, Query, Session, mapped_column, relationship
 
 from app.db import Base
@@ -25,6 +35,10 @@ class Diary(Base):
 
     score: Mapped[int] = mapped_column(Integer, nullable=False)
 
+    date: Mapped[int] = mapped_column(
+        Integer, nullable=False, doc="8-digit date in YYYYMMDD format (e.g. 20250111)"
+    )
+
     created_at: Mapped[datetime | None] = mapped_column(
         TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")
     )
@@ -41,6 +55,7 @@ class Diary(Base):
         Index("ix_diaries_user_id", "user_id"),
         Index("ix_diaries_is_deleted", "is_deleted"),
         Index("ix_diaries_created_at", "created_at"),
+        CheckConstraint("date BETWEEN 10000101 AND 99991231", name="ck_diaries_date_8digits"),
     )
 
     def __repr__(self) -> str:

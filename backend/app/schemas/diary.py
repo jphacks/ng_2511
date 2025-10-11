@@ -28,6 +28,7 @@ class DiaryOut(DiaryBase):
     id: int
     user_id: int
     score: int
+    date: int
     created_at: datetime | None
     updated_at: datetime | None
     is_deleted: bool
