@@ -12,7 +12,7 @@
 ※Dev Container を使わない場合
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 - もしかしたらあらかじめ uv をインストールしておく必要があるかもしれません。
