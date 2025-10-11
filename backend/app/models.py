@@ -1,52 +1,138 @@
-# Module-level docstring for models
-"""DB の ORM モデルを定義するモジュール
+from __future__ import annotations
 
-ここでは SQLAlchemy 2 系の記法を用いてデータベースのテーブルマッピングを
-定義します。各モデルは `Base` を継承して宣言的に定義します。
-"""
-
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import (
+    TIMESTAMP,
+    Boolean,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    text,
+)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base
 
-# -------------------------------------------------------------
-# SQLAlchemy 2 系の宣言的モデル定義
-#
-# このファイルは DB のテーブル定義（ORM モデル）を格納します。
-# SQLAlchemy 2 から導入された型注釈ベースの記述（Mapped / mapped_column）を
-# 利用しており、型安全かつ IDE に優しい定義が可能です。
-#
-# 主要な要素の説明:
-# - DeclarativeBase / Base:
-#     伝統的な `declarative_base()` と似た役割を持つ基底クラスです。
-# - Mapped[T]:
-#     カラムの Python 型を表す注釈で、静的解析や補完に役立ちます。
-# - mapped_column(...):
-#     カラムの詳細（型、制約、インデックス等）を指定するための関数。
-#
-# 小さめのプロジェクトではこのファイルでテーブルを定義し、
-# `Base.metadata.create_all()` を使ってテーブルを作成できます。
-# ただし、本番環境でのスキーマ変更は Alembic 等のマイグレーションツールを
-# 使うことを推奨します。
-# -------------------------------------------------------------
 
-
+# -------------------------------------------------------------
+# items
+# -------------------------------------------------------------
 class Item(Base):
-    """アイテムテーブルの ORM モデル
-
-    属性:
-        __tablename__ (str): DB 上のテーブル名
-        id (int): 主キー。自動採番される想定
-        name (str): アイテム名。NULL 不許可、最大長 255
-
-    SQLAlchemy 2 の `Mapped` と `mapped_column` を使うことで、型ヒントが有効になり
-    IDE の補完や静的解析ツールがより正確に動作します。
-    """
-
-    # テーブル名
     __tablename__ = "items"
 
-    # カラム定義（型注釈 + mapped_column）
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    def __repr__(self) -> str:
+        return f"Item(id={self.id!r}, name={self.name!r})"
+
+
+# -------------------------------------------------------------
+# users
+# -------------------------------------------------------------
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    image_url: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    created_at: Mapped[str | None] = mapped_column(
+        TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")
+    )
+    updated_at: Mapped[str | None] = mapped_column(
+        TIMESTAMP,
+        server_default=text("CURRENT_TIMESTAMP"),
+        server_onupdate=text("CURRENT_TIMESTAMP"),
+    )
+    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("FALSE"))
+
+    # リレーション
+    diaries: Mapped[list[Diary]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    images: Mapped[list[Image]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+
+    # あると便利なインデックス（論理削除フラグ・作成日）
+    __table_args__ = (
+        Index("ix_users_is_deleted", "is_deleted"),
+        Index("ix_users_created_at", "created_at"),
+    )
+
+    def __repr__(self) -> str:
+        return f"User(id={self.id!r}, name={self.name!r})"
+
+
+# -------------------------------------------------------------
+# diaries
+# -------------------------------------------------------------
+class Diary(Base):
+    __tablename__ = "diaries"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="RESTRICT"), nullable=False
+    )
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+
+    created_at: Mapped[str | None] = mapped_column(
+        TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")
+    )
+    updated_at: Mapped[str | None] = mapped_column(
+        TIMESTAMP,
+        server_default=text("CURRENT_TIMESTAMP"),
+        server_onupdate=text("CURRENT_TIMESTAMP"),
+    )
+    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("FALSE"))
+
+    user: Mapped[User] = relationship(back_populates="diaries", lazy="joined")
+
+    __table_args__ = (
+        Index("ix_diaries_user_id", "user_id"),
+        Index("ix_diaries_is_deleted", "is_deleted"),
+        Index("ix_diaries_created_at", "created_at"),
+    )
+
+    def __repr__(self) -> str:
+        return f"Diary(id={self.id!r}, user_id={self.user_id!r})"
+
+
+# -------------------------------------------------------------
+# images
+# -------------------------------------------------------------
+class Image(Base):
+    __tablename__ = "images"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="RESTRICT"), nullable=False
+    )
+    uri: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    created_at: Mapped[str | None] = mapped_column(
+        TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")
+    )
+    updated_at: Mapped[str | None] = mapped_column(
+        TIMESTAMP,
+        server_default=text("CURRENT_TIMESTAMP"),
+        server_onupdate=text("CURRENT_TIMESTAMP"),
+    )
+    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("FALSE"))
+
+    user: Mapped[User] = relationship(back_populates="images", lazy="joined")
+
+    __table_args__ = (
+        Index("ix_images_user_id", "user_id"),
+        Index("ix_images_is_deleted", "is_deleted"),
+        Index("ix_images_created_at", "created_at"),
+    )
+
+    def __repr__(self) -> str:
+        return f"Image(id={self.id!r}, user_id={self.user_id!r})"
