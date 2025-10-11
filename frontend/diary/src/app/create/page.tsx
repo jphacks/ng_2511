@@ -104,30 +104,19 @@ export default function HomePage() {
         {/* タイトル行 */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-800">日記を入力</h2>
-
-          {/* ✅ react-datepicker */}
-        <DatePicker
-        selected={date}
-        onChange={(d) => d && setDate(d)}
-        dateFormat="yyyy-MM-dd"
-        customInput={
-            <input
-            value={date instanceof Date ? date.toISOString().split("T")[0] : ""}
-            onChange={(e) => {
-                const newDate = new Date(e.target.value);
-                if (!isNaN(newDate.getTime())) {
-                setDate(newDate); // 有効な日付だけ更新
-                }
-            }}
-            className="border border-gray-300 rounded-lg px-3 py-1 text-gray-700 text-sm 
-                        focus:ring-2 focus:ring-indigo-400 outline-none 
-                        hover:border-indigo-400 hover:bg-indigo-50 hover:shadow-sm hover:shadow-indigo-100 
-                        cursor-pointer transition duration-200"
-            placeholder="YYYY-MM-DD"
+            {/* 日付選択 */}
+            <div className="relative">
+            <DatePicker
+                selected={date}
+                onChange={(d) => d && setDate(d)}
+                dateFormat="yyyy-MM-dd"
+                popperPlacement="bottom-start"
+                className="border border-gray-300 rounded-lg px-3 py-1 text-gray-700 text-sm
+                    focus:ring-2 focus:ring-indigo-400 outline-none
+                    hover:bg-indigo-50 hover:text-gray-900
+                    cursor-pointer transition-colors duration-200"
             />
-        }
-        />
-
+            </div>
         </div>
 
         {/* フォーム本体 */}
