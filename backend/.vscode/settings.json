@@ -26,6 +26,10 @@
   "python.linting.lintOnSave": true,
   "python.linting.pylintEnabled": true,
   "ruff.enable": true,
+  "python.analysis.stubPath": "typings",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingTypeStubs": "none"
+  },
 
   // TOML 関連の推奨設定
   "evenBetterTOML.validation.invalidType": "ignore"
