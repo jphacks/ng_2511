@@ -5,14 +5,15 @@ from io import BytesIO
 import os
 from dotenv import load_dotenv
 
-def generate_image(score:int, img_url:str) -> ImageFile:
+def generate_image(score:int, img_uri:str) -> ImageFile:
     """
     スコアによって現在のユーザーの画像の変化後画像を生成する関数
     
     Args:
         score (int): 日記スコア
+        img_uri (str): 入力画像のuri
     Returns:
-        str: 生成した変化画像の保存先のurl
+        ImageFile: 生成した変化画像
     """
     # .envファイルの読み込み
     load_dotenv(dotenv_path=".env")
