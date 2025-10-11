@@ -32,6 +32,9 @@ mysql -u appuser -papp_pass -h db app_db --ssl=0
 - mysql に接続した後にこのコマンドを打つ必要がある
 
 ```mysql
+DROP TABLE IF EXISTS images;
+DROP TABLE IF EXISTS diaries;
+DROP TABLE IF EXISTS users;
 source ./db/init/01_init.sql;
 ```
 
