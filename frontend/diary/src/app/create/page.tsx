@@ -42,6 +42,10 @@ export default function HomePage() {
     }
 
     try {
+      setIsGenerating(true); //  送信開始時に「生成中」に設定
+      setMessageType("success");
+      setMessage("日記を送信中です...");
+
       const response = await fetch("http://localhost:8000/api/v1/diaries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
