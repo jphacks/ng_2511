@@ -50,10 +50,22 @@ def generate_image(score: int, img_uri: str) -> PILImage:
         contents=[prompt, image],
     )
     new_img_uri = "test3.png"
-    for part in response.candidates[0].content.parts:
+
+    if not response.candidates:
+        raise ValueError("No candidates in Gemini response")
+
+    candidate = response.candidates[0]
+    if not candidate.content:
+        raise ValueError("No content in Gemini response candidate")
+
+    parts = candidate.content.parts
+    if not parts:
+        raise ValueError("No parts in Gemini response content")
+
+    for part in parts:
         if part.text is not None:
             print(part.text)
-        elif part.inline_data is not None:
+        elif part.inline_data is not None and part.inline_data.data is not None:
             image = Image.open(BytesIO(part.inline_data.data))
             image.save(os.path.join("/app/images", new_img_uri))
     return image
