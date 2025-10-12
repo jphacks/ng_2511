@@ -103,7 +103,7 @@ def process_generated_image(user_id: int, diary_id: int, body: str) -> None:
         # --- A) 最新画像URIを取得 ---
         latest_image = (
             db.query(Image)
-            .filter(Image.user_id == user_id, not_(Image.is_deleted))
+            .filter(not_(Image.is_deleted))
             .order_by(desc(Image.updated_at))
             .first()
         )
@@ -138,10 +138,10 @@ def process_generated_image(user_id: int, diary_id: int, body: str) -> None:
             return
 
         # --- E) 画像レコードを保存（別トランザクション）---
-        img_row = Image(user_id=user_id, uri=secure_url)  # ← 固定 1 をやめる
+        img_row = Image(diary_id=diary_id, uri=secure_url)  # ← 固定 1 をやめる
         db.add(img_row)
         db.commit()
-        log.info("Image saved user_id=%s url=%s", user_id, secure_url)
+        log.info("Image saved diary_id=%s url=%s", diary_id, secure_url)
 
     except Exception:
         log.exception("BG failed user_id=%s diary_id=%s", user_id, diary_id)
