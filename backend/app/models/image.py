@@ -9,15 +9,15 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db import Base
 
 if TYPE_CHECKING:
-    from .user import User
+    from .diary import Diary
 
 
 class Image(Base):
     __tablename__ = "images"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="RESTRICT"), nullable=False
+    diary_id: Mapped[int] = mapped_column(
+        ForeignKey("diaries.id", ondelete="RESTRICT"), nullable=False
     )
     uri: Mapped[str] = mapped_column(String(255), nullable=False)
 
@@ -31,13 +31,14 @@ class Image(Base):
     )
     is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("FALSE"))
 
-    user: Mapped[User] = relationship(back_populates="images", lazy="joined")
+    # リレーション
+    diary: Mapped[Diary] = relationship(back_populates="images", lazy="joined")
 
     __table_args__ = (
-        Index("ix_images_user_id", "user_id"),
+        Index("ix_images_diary_id", "diary_id"),
         Index("ix_images_is_deleted", "is_deleted"),
         Index("ix_images_created_at", "created_at"),
     )
 
     def __repr__(self) -> str:
-        return f"Image(id={self.id!r}, user_id={self.user_id!r})"
+        return f"Image(id={self.id!r}, diary_id={self.diary_id!r})"

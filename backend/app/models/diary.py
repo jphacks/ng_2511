@@ -20,6 +20,7 @@ from app.db import Base
 
 if TYPE_CHECKING:
     from .user import User
+    from .image import Image
 
 TD = TypeVar("TD", bound="Diary")
 
@@ -49,7 +50,13 @@ class Diary(Base):
     )
     is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("FALSE"))
 
+    # リレーション
     user: Mapped[User] = relationship(back_populates="diaries", lazy="joined")
+    images: Mapped[list[Image]] = relationship(
+        back_populates="diary",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
 
     __table_args__ = (
         Index("ix_diaries_user_id", "user_id"),
