@@ -53,9 +53,9 @@
 
 - Frontend
   - TypeScript
-  - Next.js
-  - React
-  - Tailwind CSS
+    - Next.js
+    - React
+    - Tailwind CSS
 - Backend
   - Python
     - FastAPI
