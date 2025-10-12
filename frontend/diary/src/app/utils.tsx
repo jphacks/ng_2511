@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { HomePageProps } from "./static";
+import { InputDiaryProps } from "./static";
 
 export async function getDiaryByDate(date: string): Promise<string> {
   try {
@@ -31,16 +31,23 @@ export async function getDiaryMassage(date: string = new Date().toISOString().sp
     }
 }
 
-export function InputDiaryForm({diary, isEdit}: HomePageProps = { diary: { id: 0, date: "", body: "" }, isEdit: false }) {
+export function InputDiaryForm({diary, isEdit, writeDiaryDate, onSuccess}: InputDiaryProps & { onSuccess?: () => Promise<void> | void } = { diary: { id: 0, date: "", body: "" }, isEdit: false, writeDiaryDate: 0 }) {
   const [diaryText, setDiaryText] = useState(diary.body);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
   const [isGenerating, setIsGenerating] = useState(false); //  画像生成中フラグを追加
 
   const today = new Date();
-  const defaultDateObj = diary.date ? new Date(diary.date) : today;
+  let defaultDateObj;
+  if (diary.date === "") {
+    defaultDateObj = new Date(writeDiaryDate.toString().slice(0,4) + "-" + writeDiaryDate.toString().slice(4,6) + "-" + writeDiaryDate.toString().slice(6,8));
+  }
+  else{
+    defaultDateObj = diary.date ? new Date(diary.date) : today;
+  }
   const [date, setDate] = useState<Date>(defaultDateObj);
   // 日記送信処理
+  console.log(diary);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -74,13 +81,22 @@ export function InputDiaryForm({diary, isEdit}: HomePageProps = { diary: { id: 0
           })
         })
       };
-      console.log(diaryText);
+      
       if (!response.ok) throw new Error("APIリクエストに失敗しました");
       const data = await response.json();
 
       setMessageType("success");
       setMessage("日記が保存されました！画像を生成しています...");
       setDiaryText("");
+
+      // 保存成功後に親へ通知して一覧を再取得させる（必要に応じてページ全体のリロードやキャッシュ再検証を行う）
+      if (onSuccess) {
+        try {
+          await onSuccess();
+        } catch (err) {
+          console.warn('onSuccess callback failed:', err);
+        }
+      }
 
     } catch (error) {
       console.error(error);

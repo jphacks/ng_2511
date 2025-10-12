@@ -94,6 +94,22 @@ export default function DiariesPage() {
     setIsEdit(date !== null);
   };
 
+  const fetchAndSetDiaries = async () => {
+    try {
+      setLoading(true);
+      const fetchedDiaries = await fetchDiaries();
+      const sortedDiaries = sortDiariesByDate(fetchedDiaries);
+      setDiaries(sortedDiaries);
+      setFilteredDiaries(sortedDiaries);
+      setError(null);
+    } catch (err) {
+      console.error('Error loading diaries:', err);
+      setError('日記の読み込みに失敗しました');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const RightSide = () => {
     if (selectedDate === null){
       return (
@@ -131,8 +147,8 @@ export default function DiariesPage() {
                 </button>
               )}
             </div>
-          
-          <InputDiaryForm diary={diary} isEdit={isEdit} />
+
+          <InputDiaryForm diary={diary} isEdit={isEdit} writeDiaryDate={selectedDate} onSuccess={fetchAndSetDiaries} />
         </div>
       );
     }

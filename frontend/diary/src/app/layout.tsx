@@ -62,59 +62,43 @@ function Header() {
           <Image
             src={icon} // publicフォルダに配置
             alt="ミライかもね ロゴ"
-            width={32}
-            height={32}
+            width={64}
+            height={64}
             className="rounded-sm"
           />
 
           {/* 変更*/}
-          <span className="font-semibold text-lg text-emerald-700">
+          <span className="font-semibold text-2xl text-emerald-700">
             ミライかもね
           </span>
         </Link>
 
-        {/* 右側：メニュー＋画像 */}
-        <div className="flex items-center gap-4">
-          {/* プルダウンメニュー */}
-          <div className="relative">
-            {/* 変更*/}
-            <button
-              onClick={() => setOpen(!open)}
-              className="flex items-center gap-1 px-3 py-2 border border-emerald-300 rounded-lg bg-white hover:bg-emerald-50 transition"
+        {/* 右側：メニュー & 画像 */}
+        <div className="flex items-center gap-6">
+          <nav className="flex items-center gap-4">
+            <Link
+              href="/diaries"
+              className="text-gray-700 hover:text-emerald-600 transition font-medium"
             >
-              メニュー
-              <ChevronDown
-                size={16}
-                className={`transition-transform ${
-                  open ? "rotate-180" : "rotate-0"
-                }`}
-              />
-            </button>
+              日記帳
+            </Link>
+            <Link
+              href="/gallery"
+              className="text-gray-700 hover:text-emerald-600 transition font-medium"
+            >
+              これまでの思い出
+            </Link>
+          </nav>
 
-            {/* 変更*/}
-            {open && (
-              <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-md py-2">
-                <Link
-                  href="/diaries"
-                  className="block px-4 py-2 text-sm hover:bg-emerald-50"
-                  onClick={() => setOpen(false)}
-                >
-                  日記一覧
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* 取得した画像を表示 */}
+          {/* ユーザー画像 */}
           {imageUri ? (
             <img
               src={imageUri}
               alt="ユーザー画像"
-              className="w-10 h-10 rounded-full border-2 border-emerald-200 object-cover shadow-sm"
+              className="w-10 h-10 rounded-full border-2 border-emerald-300 object-cover hover:scale-105 transition-transform"
             />
           ) : (
-            // 変更
-            <div className="w-10 h-10 rounded-full bg-emerald-100 animate-pulse" />
+            <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
           )}
         </div>
       </div>
