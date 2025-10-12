@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Sequence
 from io import BytesIO
 from typing import (
@@ -11,15 +12,21 @@ from uuid import uuid4
 
 import cloudinary
 import cloudinary.uploader
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from PIL.Image import Image as PILImage
 from sqlalchemy import desc, not_
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
+from app.db import SessionLocal
 from app.models.diary import Diary
 from app.models.image import Image
-from app.schemas.diary import DiaryBase, DiaryCreate, DiaryOut
+from app.schemas.diary import (
+    DiaryBase,
+    DiaryCreate,
+    DiaryOut,
+    PostAndPutDiaryResponse,
+)
 from app.utils.generate_diary_score import generate_diary_score_using_Gemini
 from app.utils.generate_image import generate_image
 from app.utils.parse_image import parse_date
@@ -87,6 +94,64 @@ def upload_pil_to_cloudinary(
     return res
 
 
+def process_generated_image(user_id: int, diary_id: int, body: str) -> None:
+    log = logging.getLogger("app.bg")
+    log.info("BG start user_id=%s diary_id=%s", user_id, diary_id)
+
+    db = SessionLocal()
+    try:
+        # --- A) 最新画像URIを取得 ---
+        latest_image = (
+            db.query(Image)
+            .filter(Image.user_id == user_id, not_(Image.is_deleted))
+            .order_by(desc(Image.updated_at))
+            .first()
+        )
+        if latest_image is None:
+            log.error("No image found for the user user_id=%s", user_id)
+            return
+        image_uri = latest_image.uri
+
+        # --- B) スコア計算（外部API） ---
+        log.info("Generating diary score using Gemini")
+        score = generate_diary_score_using_Gemini(body)
+
+        # --- C) スコアだけを先に確定コミット ---
+        diary = db.query(Diary).filter(Diary.id == diary_id).first()
+        if diary is None:
+            log.error("Diary not found id=%s", diary_id)
+            return
+        diary.score = score
+        db.add(diary)
+        db.commit()  # ★ ここで確定
+        log.info("Score updated diary_id=%s score=%s", diary_id, score)
+
+        # --- D) 画像生成 & アップロード（失敗してもスコアは残る）---
+        log.info("Generating image with score=%s", score)
+        gen_img = generate_image(score, image_uri)
+
+        log.info("Uploading generated image to Cloudinary")
+        res = upload_pil_to_cloudinary(gen_img, folder="generated")
+        secure_url = res.get("secure_url")
+        if not secure_url:
+            log.error("Upload returned no secure_url")
+            return
+
+        # --- E) 画像レコードを保存（別トランザクション）---
+        img_row = Image(user_id=user_id, uri=secure_url)  # ← 固定 1 をやめる
+        db.add(img_row)
+        db.commit()
+        log.info("Image saved user_id=%s url=%s", user_id, secure_url)
+
+    except Exception:
+        log.exception("BG failed user_id=%s diary_id=%s", user_id, diary_id)
+        db.rollback()
+        # ここでraiseしてもOK/しなくてもOK（好み）
+    finally:
+        db.close()
+        log.info("BG done user_id=%s diary_id=%s", user_id, diary_id)
+
+
 @router.get("/", response_model=list[DiaryOut])
 def read_diaries(db: Annotated[Session, Depends(get_db)]) -> Sequence[Diary]:
     """全日記取得"""
@@ -118,10 +183,11 @@ def read_diary(diary_id: int, db: Annotated[Session, Depends(get_db)]) -> Diary:
         ) from e
 
 
-@router.post("/", response_model=DiaryOut)
+@router.post("/", response_model=PostAndPutDiaryResponse)
 async def create_diary(
     diary_in: DiaryCreate,
     db: Annotated[Session, Depends(get_db)],
+    background: BackgroundTasks,
 ) -> Diary:
     try:
         # 必須項目のチェック
@@ -140,44 +206,15 @@ async def create_diary(
         if existing_diary:
             raise HTTPException(status_code=400, detail="Diary for this date already exists")
 
-        # 日記の内容を元にスコアを計算
-        score: int = generate_diary_score_using_Gemini(diary_in.body)
-
         user_id = 1  # 仮のユーザーID
 
-        # 今までのImageから最新のrecordを取得してuriを取得する
-        latest_image = (
-            db.query(Image)
-            .filter(Image.user_id == user_id, not_(Image.is_deleted))
-            .order_by(desc(Image.updated_at))
-            .first()
-        )
-
-        if latest_image is None:
-            raise HTTPException(status_code=400, detail="No image found for the user")
-
-        # 画像のURIを取得
-        image_uri = latest_image.uri
-
-        # 画像を生成
-        generated_image = generate_image(score, image_uri)
-
-        # 生成した画像をCloudinaryにアップロード
-        upload_res = upload_pil_to_cloudinary(generated_image, folder="generated")
-
-        if not upload_res.get("secure_url"):
-            raise HTTPException(status_code=500, detail="Failed to upload generated image")
-
-        # 生成した画像のURLをImageテーブルに保存
-        new_image = Image(user_id=user_id, uri=upload_res["secure_url"])
-        db.add(new_image)
-        db.commit()
-        db.refresh(new_image)
-
-        diary = Diary(**diary_in.model_dump(), score=score, user_id=user_id)
+        diary = Diary(**diary_in.model_dump(), user_id=user_id)
         db.add(diary)
         db.commit()
         db.refresh(diary)
+
+        background.add_task(process_generated_image, user_id, diary.id, diary.body)
+
         return diary
     except HTTPException:
         raise
@@ -188,11 +225,12 @@ async def create_diary(
         ) from e
 
 
-@router.put("/{diary_id}", response_model=DiaryOut)
+@router.put("/{diary_id}", response_model=PostAndPutDiaryResponse)
 def update_diary(
     diary_id: int,
     diary_update: DiaryBase,
     db: Annotated[Session, Depends(get_db)],
+    background: BackgroundTasks,
 ) -> Diary:
     try:
         diary = Diary.active(db).filter(Diary.id == diary_id).first()
@@ -203,43 +241,12 @@ def update_diary(
         diary.body = diary_update.body
         # それ以外は変更不可
 
-        # bodyを下にscoreを再計算
-        score: int = generate_diary_score_using_Gemini(diary.body)
-
-        diary.score = score
-
-        # 新しいスコアに基づいて画像を再生成する
-        user_id = diary.user_id
-        latest_image = (
-            db.query(Image)
-            .filter(Image.user_id == user_id, not_(Image.is_deleted))
-            .order_by(desc(Image.updated_at))
-            .first()
-        )
-
-        if latest_image is None:
-            raise HTTPException(status_code=400, detail="No image found for the user")
-
-        image_uri = latest_image.uri
-
-        # 画像を生成
-        generated_image = generate_image(score, image_uri)
-
-        # 生成した画像をCloudinaryにアップロード
-        upload_res = upload_pil_to_cloudinary(generated_image, folder="generated")
-
-        if not upload_res.get("secure_url"):
-            raise HTTPException(status_code=500, detail="Failed to upload generated image")
-
-        # 生成した画像のURLをImageテーブルに保存
-        new_image = Image(user_id=user_id, uri=upload_res["secure_url"])
-        db.add(new_image)
-        db.commit()
-        db.refresh(new_image)
-
         db.add(diary)
         db.commit()
         db.refresh(diary)
+
+        background.add_task(process_generated_image, diary.user_id, diary.id, diary_update.body)
+
         return diary
     except HTTPException:
         raise
