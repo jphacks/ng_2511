@@ -155,7 +155,7 @@ export default function DiariesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
           <p className="text-gray-600">日記を読み込み中...</p>
@@ -166,7 +166,7 @@ export default function DiariesPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 mb-4">
             <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +186,7 @@ export default function DiariesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-50">
       <div className="container mx-auto px-4 py-8">
         {/* ヘッダー */}
         <div className="flex justify-between items-center mb-8">
@@ -198,9 +198,9 @@ export default function DiariesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* 左側: カレンダー */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
+            {/* <h2 className="text-xl font-semibold text-gray-700 mb-4">
               カレンダー
-            </h2>
+            </h2> */}
             <Calendar
               diaryDates={diaryDates}
               selectedDate={selectedDate}
