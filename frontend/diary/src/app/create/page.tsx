@@ -3,12 +3,10 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Diary } from "../edit/[date]/type";
 
-interface HomePageProps {
-  diary: Diary;
-  isEdit: boolean;
-}
+import { HomePageProps } from "../static";
+
+
 
 export default function HomePage({ diary, isEdit }: HomePageProps = { diary: { id: 0, date: "", body: "" }, isEdit: false }) {
   if (!diary) {

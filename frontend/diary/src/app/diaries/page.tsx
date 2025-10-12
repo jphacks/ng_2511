@@ -7,9 +7,7 @@ import DiaryList from './components/DiaryList';
 import { DiaryEntry, fetchDiaries, getDiaryDates, sortDiariesByDate } from './api';
 import { InputDiaryForm } from '../utils';
 import { Diary } from '../static';
-=======
-import { DiaryEntry, fetchDiaries, getDiaryDates, sortDiariesByDate } from '@/api/diaries';
->>>>>>> b8aaf182d080270db8546663a86394f105a105f6
+import { formatDateToSimpleJapanese } from '../../utils/dateFormat';
 
 
 // int型日付をYYYY-MM-DD文字列に変換
@@ -122,7 +120,7 @@ export default function DiariesPage() {
         <div>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-700">
-            {intToDateString(selectedDate)}の日記を{isEdit ? "編集" : "作成"}中
+            {formatDateToSimpleJapanese(selectedDate)}の日記を{isEdit ? "編集" : "作成"}中
             </h2> 
           {selectedDate && (
             <button

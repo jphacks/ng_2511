@@ -128,15 +128,6 @@ export default function DiaryList({ diaries, selectedDate, onDateSelect, intToDa
               {/* アクションボタン */}
               <div className="flex gap-2">
                 <button
-                  className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  title="編集"
-                  onClick={() => redirect(`edit/${diary.date}`, RedirectType.push)}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-                <button
                   className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   title="削除"
                 >
@@ -150,13 +141,6 @@ export default function DiaryList({ diaries, selectedDate, onDateSelect, intToDa
             {/* コンテンツ部分 */}
             <div className="text-gray-700">
               <p>{truncateContent(diary.content)}</p>
-            </div>
-
-            {/* フッター */}
-            <div className="mt-3 pt-3 border-t border-gray-100 flex justify-end items-center">
-              <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                詳細を見る →
-              </button>
             </div>
           </div>
         ))}
