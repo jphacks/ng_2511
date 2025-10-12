@@ -73,7 +73,7 @@ export default function DiaryList({ diaries, selectedDate, onDateSelect, intToDa
           <div className="mt-4">
             <Link
               href="/create"
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -89,8 +89,8 @@ export default function DiaryList({ diaries, selectedDate, onDateSelect, intToDa
   return (
     <div className="space-y-4">
       {selectedDate && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-          <p className="text-blue-800 text-sm font-medium">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-4">
+          <p className="text-emerald-800 text-sm font-medium">
             {formatDate(selectedDate)}の日記を表示中
           </p>
         </div>

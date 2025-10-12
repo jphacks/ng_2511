@@ -145,17 +145,18 @@ export default function Calendar({ diaryDates, selectedDate, onDateSelect }: Cal
               onClick={() => handleDateClick(date)}
               disabled={!isCurrentMonthDate}
               className={`
-                w-full h-10 text-sm flex items-center justify-center rounded-lg transition-all
+                w-full h-10 text-sm flex items-center justify-center rounded-lg transition-all border-2
                 ${isCurrentMonthDate ? 'text-gray-900' : 'text-gray-300'}
-                ${isCurrentMonthDate
-                  ? 'hover:bg-gray-100 cursor-pointer border-2 border-transparent'
-                  : 'cursor-default border-2 border-transparent'
+                ${isCurrentMonthDate && !isSelectedDate
+                  ? 'hover:bg-gray-100 cursor-pointer border-transparent'
+                  : 'border-transparent'
                 }
-                ${hasEntry
-                  ? 'bg-blue-100 border-blue-300'
+                ${!isCurrentMonthDate ? 'cursor-default' : ''}
+                ${hasEntry && !isSelectedDate
+                  ? 'bg-emerald-100 border-emerald-300'
                   : ''
                 }
-                ${isSelectedDate ? 'bg-blue-500 text-white hover:bg-blue-600' : ''}
+                ${isSelectedDate ? 'bg-emerald-500 text-white hover:bg-emerald-600' : ''}
               `}
             >
               <span className="relative">
@@ -169,11 +170,11 @@ export default function Calendar({ diaryDates, selectedDate, onDateSelect }: Cal
       {/* 凡例 */}
       <div className="mt-4 text-xs text-gray-600 space-y-1">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-blue-100 border-2 border-blue-300 rounded"></div>
+          <div className="w-3 h-3 bg-emerald-100 border-2 border-emerald-300 rounded"></div>
           <span>日記あり</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-blue-500 rounded"></div>
+          <div className="w-3 h-3 bg-emerald-500 rounded"></div>
           <span>選択中</span>
         </div>
       </div>
