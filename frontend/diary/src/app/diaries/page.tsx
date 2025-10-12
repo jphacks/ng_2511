@@ -50,6 +50,7 @@ export default function DiariesPage() {
          
         const data = await res.json();
         setDiary(data);
+        setIsEdit(true);
       } catch (err: any) {
         setError(err.message);
       }
@@ -91,7 +92,7 @@ export default function DiariesPage() {
   const handleDateSelect = (date: number | null) => {
     setSelectedDate(date);
     fetchDiary(date);
-    setIsEdit(date !== null);
+    // setIsEdit(date !== null);
   };
 
   const fetchAndSetDiaries = async () => {
