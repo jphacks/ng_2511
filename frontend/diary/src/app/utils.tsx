@@ -87,7 +87,6 @@ export function InputDiaryForm({diary, isEdit, writeDiaryDate, onSuccess}: Input
 
       setMessageType("success");
       setMessage("日記が保存されました！画像を生成しています...");
-      setDiaryText("");
 
       // 保存成功後に親へ通知して一覧を再取得させる（必要に応じてページ全体のリロードやキャッシュ再検証を行う）
       if (onSuccess) {
