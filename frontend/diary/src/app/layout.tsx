@@ -5,6 +5,8 @@ import { ReactNode, useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { devUserImage } from "./static";
+import Image from "next/image";
+import icon from "@/public/logo/logo.png"; // 変更
 
 type ImageResponse = {
   uri: string;
@@ -19,7 +21,8 @@ type ImageResponse = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
-      <body className="bg-gray-50 min-h-screen">
+      {/* 変更 */}
+      <body className="bg-gradient-to-b from-green-50 to-emerald-50 min-h-screen text-gray-800">
         <Header />
         <main className="pt-16">{children}</main>
       </body>
@@ -32,7 +35,6 @@ function Header() {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const user_id = 1; // 仮のユーザーID
 
-  // 画像を取得
   useEffect(() => {
     const fetchImage = async () => {
       try {
@@ -47,26 +49,38 @@ function Header() {
         console.error(err);
       }
     };
-
     fetchImage();
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+    // 変更
+    <header className="fixed top-0 left-0 right-0 bg-gradient-to-r from-green-100 to-emerald-100 shadow-sm z-50">
       <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-3">
-        {/* 左側：アイコン＋サービス名 */}
+        {/* 左側：ロゴ＋サービス名 */}
         <Link href="/diaries" className="flex items-center gap-2">
-          <span className="text-blue-600 text-2xl">📝</span>
-          <span className="font-semibold text-lg">My Diary</span>
+          {/* 変更 */}
+          <Image
+            src={icon} // publicフォルダに配置
+            alt="ミライかもね ロゴ"
+            width={32}
+            height={32}
+            className="rounded-sm"
+          />
+
+          {/* 変更*/}
+          <span className="font-semibold text-lg text-emerald-700">
+            ミライかもね
+          </span>
         </Link>
 
         {/* 右側：メニュー＋画像 */}
         <div className="flex items-center gap-4">
           {/* プルダウンメニュー */}
           <div className="relative">
+            {/* 変更*/}
             <button
               onClick={() => setOpen(!open)}
-              className="flex items-center gap-1 px-3 py-2 border rounded-lg hover:bg-gray-100"
+              className="flex items-center gap-1 px-3 py-2 border border-emerald-300 rounded-lg bg-white hover:bg-emerald-50 transition"
             >
               メニュー
               <ChevronDown
@@ -77,11 +91,12 @@ function Header() {
               />
             </button>
 
+            {/* 変更*/}
             {open && (
               <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-md py-2">
                 <Link
                   href="/diaries"
-                  className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  className="block px-4 py-2 text-sm hover:bg-emerald-50"
                   onClick={() => setOpen(false)}
                 >
                   日記一覧
@@ -95,10 +110,11 @@ function Header() {
             <img
               src={imageUri}
               alt="ユーザー画像"
-              className="w-10 h-10 rounded-full border object-cover"
+              className="w-10 h-10 rounded-full border-2 border-emerald-200 object-cover shadow-sm"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
+            // 変更
+            <div className="w-10 h-10 rounded-full bg-emerald-100 animate-pulse" />
           )}
         </div>
       </div>
