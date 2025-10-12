@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { DiaryEntry, fetchDiaries, sortDiariesByDate } from '@/api/diaries';
+import { fetchAllImages, createImageMapByDiaryId } from '@/api/images';
+import { ImageData } from '@/types';
 import GallerySlider from './components/GallerySlider';
 import GalleryHeader from './components/GalleryHeader';
 import GalleryImage from './components/GalleryImage';
@@ -10,34 +12,49 @@ import { LoadingState, ErrorState, EmptyState } from './components/StatusDisplay
 
 export default function GalleryPage() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
+  const [images, setImages] = useState<Map<number, ImageData>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   // 現在表示している日記のインデックス
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // APIから日記データを取得
+  // APIから日記データと画像データを取得
   useEffect(() => {
-    const loadDiaries = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const fetchedDiaries = await fetchDiaries();
+        
+        // 日記と画像を並行して取得
+        const [fetchedDiaries, fetchedImages] = await Promise.all([
+          fetchDiaries(),
+          fetchAllImages()
+        ]);
+        
         const sortedDiaries = sortDiariesByDate(fetchedDiaries, true); // 古い順にソート
+        const imageMap = createImageMapByDiaryId(fetchedImages);
+        
         setDiaries(sortedDiaries);
+        setImages(imageMap);
         setError(null);
       } catch (err) {
-        console.error('Error loading diaries:', err);
-        setError('日記の読み込みに失敗しました');
+        console.error('Error loading data:', err);
+        setError('データの読み込みに失敗しました');
       } finally {
         setLoading(false);
       }
     };
 
-    loadDiaries();
+    loadData();
   }, []);
   
   // 現在の日記（日記がない場合はnull）
   const currentDiary = diaries.length > 0 ? diaries[currentIndex] : null;
+  
+  // 現在の日記に対応する画像
+  const currentImage = currentDiary 
+    ? images.get(parseInt(currentDiary.id, 10)) 
+    : null;
 
   // ローディング中の表示
   if (loading) return <LoadingState />;
@@ -60,7 +77,7 @@ export default function GalleryPage() {
         {/* メインコンテンツエリア */}
         <div className="grid grid-cols-2 gap-8 mb-8">
           {/* 左：画像 */}
-          <GalleryImage />
+          <GalleryImage imageData={currentImage} />
 
           {/* 右：日記カード */}
           <DiaryCard diary={currentDiary} />
