@@ -1,24 +1,41 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import icon from "@/public/logo/logo.png"; // 
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold mb-6">My Diary</h1>
-      <p className="text-gray-600 mb-8">あなたの日々の記録を残しましょう。</p>
-      
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-green-50 to-emerald-50 p-6">
+      {/* アイコン */}
+      <Image
+        src={icon}
+        alt="ミライかもね アイコン"
+        width={120}
+        height={120}
+        className="mb-4"
+      />
+
+      {/* タイトル */}
+      <h1 className="text-4xl font-bold text-emerald-700 mb-3">ミライかもね</h1>
+
+      {/* サブテキスト */}
+      <p className="text-gray-600 text-center mb-8">
+        日記が描く、もうひとりのミライ
+      </p>
+
+      {/* ボタン群 */}
       <Link
         href="/create"
-        className="bg-blue-600 text-white px-5 py-3 rounded-lg text-lg hover:bg-blue-700 transition"
+        className="bg-emerald-500 text-white px-6 py-3 rounded-lg text-lg shadow-md hover:bg-emerald-600 transition"
       >
-        新しい日記を書く
+        日記を書く
       </Link>
       <Link
         href="/upload_image"
-        className="mt-4 text-blue-600 hover:underline"
+        className="mt-4 text-emerald-700 hover:underline"
       >
-        あなたについて教えてください
+        新しい日記帳をつくる
       </Link>
     </div>
   );
