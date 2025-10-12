@@ -18,7 +18,7 @@ export default function DiaryCard({ diary }: Props) {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="h-full flex flex-col">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">{diary.title}</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-emerald-500 pb-2">{diary.title}</h2>
         <div className="flex-1 overflow-y-auto">
           <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{diary.content}</p>
         </div>
