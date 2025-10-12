@@ -98,13 +98,12 @@ export default function DiariesPage() {
     if (selectedDate === null){
       return (
         <div>
-        <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-700">
-                日記一覧
-              </h2>
-            </div>
-        <div className="bg-white rounded-lg shadow-md p-6">
-            
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-700">
+              日記一覧
+            </h2>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-6">
             <DiaryList
               diaries={filteredDiaries}
               selectedDate={selectedDate}
@@ -113,25 +112,24 @@ export default function DiariesPage() {
             />
           </div>
         </div>
-            );
+      );
     }
     else{
       return (
         <div>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-700">
-            {formatDateToSimpleJapanese(selectedDate)}の日記を{isEdit ? "編集" : "作成"}中
+              {formatDateToSimpleJapanese(selectedDate)}の日記を{isEdit ? "編集" : "作成"}中
             </h2> 
-          {selectedDate && (
-            <button
-                  onClick={() => handleDateSelect(null)}
-                  className="text-sm text-blue-600 hover:text-blue-800 underline"
-                >
-                  すべて表示
-                </button>
-              )}
-            </div>
-          
+            {selectedDate && (
+              <button
+                onClick={() => handleDateSelect(null)}
+                className="text-sm text-emerald-600 hover:text-emerald-800 underline transition-colors"
+              >
+                すべて表示
+              </button>
+            )}
+          </div>
           <InputDiaryForm diary={diary} isEdit={isEdit} />
         </div>
       );
@@ -142,7 +140,7 @@ export default function DiariesPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
           <p className="text-gray-600">日記を読み込み中...</p>
         </div>
       </div>
@@ -161,7 +159,7 @@ export default function DiariesPage() {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
           >
             再読み込み
           </button>

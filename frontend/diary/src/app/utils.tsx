@@ -94,15 +94,15 @@ export function InputDiaryForm({diary, isEdit}: HomePageProps = { diary: { id: 0
             value={diaryText}
             onChange={(e) => setDiaryText(e.target.value)}
             rows={6}
-            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-400 outline-none"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-400 outline-none"
             placeholder="今日の気持ちや出来事を書いてみよう..."
           />
 
           <button
             type="submit"
-            className="w-full bg-indigo-500 text-white py-2 rounded-lg font-semibold 
+            className="w-full bg-emerald-500 text-white py-2 rounded-lg font-semibold 
                        transition duration-200
-                       hover:bg-indigo-600 hover:shadow-md hover:shadow-indigo-200 
+                       hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-200 
                        cursor-pointer"
             disabled={isGenerating} // 生成中は二重送信防止
           >
