@@ -11,7 +11,6 @@ from app.db import Base
 if TYPE_CHECKING:
     # 型チェックのためだけに読み込む（実行時は読み込まれない）
     from .diary import Diary
-    from .image import Image
 
 
 class User(Base):
@@ -33,11 +32,6 @@ class User(Base):
 
     # リレーション
     diaries: Mapped[list[Diary]] = relationship(
-        back_populates="user",
-        cascade="all, delete-orphan",
-        lazy="selectin",
-    )
-    images: Mapped[list[Image]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
         lazy="selectin",

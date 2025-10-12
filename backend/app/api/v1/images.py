@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
 from app.models.image import Image
+from app.models.diary import Diary
 from app.models.user import User
 from app.schemas.image import ImageCreateOut, ImageOut
 
@@ -23,17 +24,37 @@ router = APIRouter(prefix="/images", tags=["images"])
 
 @router.get("/", response_model=ImageOut)
 def get_latest_image(user_id: int, db: Annotated[Session, Depends(get_db)]) -> Image:
-    """指定した user_id の最新の画像を取得"""
-    stmt = (
+    """
+    指定した user_id の最新の画像を取得
+
+    処理の流れ:
+    1. user_id に紐づく最新の日記 (diary) を取得
+    2. その diary_id に紐づく最新の画像 (image) を取得
+    """
+    # Step 1: 最新の日記を取得
+    diary_stmt = (
+        select(Diary)
+        .where(Diary.user_id == user_id, not_(Diary.is_deleted))
+        .order_by(desc(Diary.updated_at))
+        .limit(1)
+    )
+    latest_diary = db.execute(diary_stmt).scalars().first()
+
+    if latest_diary is None:
+        raise HTTPException(status_code=404, detail="Diary not found for this user")
+
+    # Step 2: その日記に紐づく最新画像を取得
+    image_stmt = (
         select(Image)
-        .where(Image.user_id == user_id, not_(Image.is_deleted))
+        .where(Image.diary_id == latest_diary.id, not_(Image.is_deleted))
         .order_by(desc(Image.updated_at))
         .limit(1)
     )
+    image = db.execute(image_stmt).scalars().first()
 
-    image = db.execute(stmt).scalars().first()
     if image is None:
-        raise HTTPException(status_code=404, detail="Image not found")
+        raise HTTPException(status_code=404, detail="Image not found for this diary")
+
     return image
 
 
