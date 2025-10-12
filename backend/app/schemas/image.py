@@ -26,7 +26,7 @@ class ImageOut(ImageBase):
     """
 
     id: int
-    user_id: int
+    diary_id: int
     created_at: datetime | None
     updated_at: datetime | None
     is_deleted: bool
