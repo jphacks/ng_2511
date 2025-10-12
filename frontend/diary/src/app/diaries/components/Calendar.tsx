@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface CalendarProps {
   diaryDates: number[]; // 日記が存在する日付の配列
@@ -10,6 +10,19 @@ interface CalendarProps {
 
 export default function Calendar({ diaryDates, selectedDate, onDateSelect }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  // selectedDateが変更されたら、その月にカレンダーを移動
+  useEffect(() => {
+    if (selectedDate !== null) {
+      // int型日付をDateオブジェクトに変換
+      const dateStr = selectedDate.toString();
+      const year = parseInt(dateStr.substring(0, 4));
+      const month = parseInt(dateStr.substring(4, 6)) - 1; // 月は0始まり
+      const day = parseInt(dateStr.substring(6, 8));
+      
+      setCurrentDate(new Date(year, month, day));
+    }
+  }, [selectedDate]);
 
   // 現在の年月を取得
   const year = currentDate.getFullYear();
