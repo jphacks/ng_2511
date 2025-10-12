@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Calendar from './components/Calendar';
 import DiaryList from './components/DiaryList';
-import { DiaryEntry, fetchDiaries, getDiaryDates, sortDiariesByDate } from './api';
+import { DiaryEntry, fetchDiaries, getDiaryDates, sortDiariesByDate } from '@/api/diaries';
 
 
 // int型日付をYYYY-MM-DD文字列に変換
