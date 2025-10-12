@@ -1,6 +1,6 @@
 # ミライかもね
 
-[!image](frontend/diary/src/public/logo/logo.png)
+![image](frontend/diary/src/public/logo/logo.png)
 
 ## 製品概要
 
