@@ -52,7 +52,10 @@ export default function GalleryPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-8">
       <div className="max-w-7xl mx-auto">
         {/* ヘッダー */}
-        <GalleryHeader currentDate={currentDiary ? currentDiary.date : null} />
+        <GalleryHeader 
+          oldestDate={diaries.length > 0 ? diaries[0].date : null}
+          newestDate={diaries.length > 0 ? diaries[diaries.length - 1].date : null}
+        />
 
         {/* メインコンテンツエリア */}
         <div className="grid grid-cols-2 gap-8 mb-8">

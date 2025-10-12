@@ -62,9 +62,12 @@ export default function GallerySlider({
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="flex items-center gap-4">
-        <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
-          過去
-        </span>
+        <div className="text-center">
+          <div className="text-sm font-medium text-gray-700 whitespace-nowrap mb-1">過去</div>
+          <div className="text-xs text-gray-500 whitespace-nowrap">
+            {dates.length > 0 ? formatDateToSimpleJapanese(dates[0]) : ''}
+          </div>
+        </div>
         <div className="flex-1 relative">
           <div className="relative">
             <input
@@ -94,14 +97,14 @@ export default function GallerySlider({
                 transform: 'translateX(-50%)'
               }}
             >
-              <span className="text-xs text-gray-700 bg-white px-2 py-0.5 rounded whitespace-nowrap">
+              <span className="text-sm font-semibold text-gray-700 bg-white px-3 py-1 rounded whitespace-nowrap shadow-md">
                 {isInteracting && hoveredIndex !== null
                   ? (dates[hoveredIndex] ? formatDateToSimpleJapanese(dates[hoveredIndex]) : '')
                   : (dates[currentIndex] ? formatDateToSimpleJapanese(dates[currentIndex]) : '')}
               </span>
             </div>
           </div>
-
+{/* 
           <div className="flex justify-between mt-8">
             <span className="text-xs text-gray-500">
               {dates.length > 0 ? formatDateToSimpleJapanese(dates[0]) : ''}
@@ -109,11 +112,14 @@ export default function GallerySlider({
             <span className="text-xs text-gray-500">
               {dates.length > 0 ? formatDateToSimpleJapanese(dates[dates.length - 1]) : ''}
             </span>
+          </div> */}
+        </div>
+        <div className="text-center">
+          <div className="text-sm font-medium text-gray-700 whitespace-nowrap mb-1">現在</div>
+          <div className="text-xs text-gray-500 whitespace-nowrap">
+            {dates.length > 0 ? formatDateToSimpleJapanese(dates[dates.length - 1]) : ''}
           </div>
         </div>
-        <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
-          現在
-        </span>
       </div>
 
       {/* スタイル */}
