@@ -50,3 +50,23 @@ class DiaryOut(DiaryBase):
     is_deleted: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# POSTとPUTで返すスキーマはscoreを含まない
+class PostAndPutDiaryResponse(DiaryBase):
+    """レスポンス用スキーマ（日記出力）
+
+    DiaryOut はサーバーがクライアントに返す日記表現を定義します。
+    DB の主キー `id` や、内部でのみ管理しているフィールドをここに含めます。
+
+    column情報は全部返す
+    """
+
+    id: int
+    user_id: int
+    date: int
+    created_at: datetime | None
+    updated_at: datetime | None
+    is_deleted: bool
+
+    model_config = ConfigDict(from_attributes=True)

@@ -26,10 +26,10 @@ export default function HomePage() {
 
       {/* ボタン群 */}
       <Link
-        href="/create"
+        href="/diaries"
         className="bg-emerald-500 text-white px-6 py-3 rounded-lg text-lg shadow-md hover:bg-emerald-600 transition"
       >
-        日記を書く
+        日記を始める
       </Link>
       <Link
         href="/upload_image"

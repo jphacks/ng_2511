@@ -33,7 +33,7 @@ class Diary(Base):
     )
     body: Mapped[str] = mapped_column(Text, nullable=False)
 
-    score: Mapped[int] = mapped_column(Integer, nullable=False)
+    score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     date: Mapped[int] = mapped_column(
         Integer, nullable=False, doc="8-digit date in YYYYMMDD format (e.g. 20250111)"
