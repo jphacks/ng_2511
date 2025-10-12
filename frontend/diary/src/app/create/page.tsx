@@ -4,7 +4,7 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { HomePageProps } from "../static";
+import { InputDiaryProps } from "../static";
 
 
 

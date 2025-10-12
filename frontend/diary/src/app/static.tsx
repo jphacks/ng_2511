@@ -6,7 +6,9 @@ export interface Diary {
   body: string;
 };
 
-export interface HomePageProps {
+export interface InputDiaryProps {
   diary: Diary;
   isEdit: boolean;
+  writeDiaryDate: number;
+  onSuccess?: () => Promise<void> | void;
 }
