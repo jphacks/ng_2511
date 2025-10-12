@@ -81,7 +81,7 @@
   - [backend/app/utils/generate_diary_score.py](./backend/app/utils/generate_diary_score.py)
   - [backend/app/api/v1/diaries.py](./backend/app/api/v1/diaries.py)
 
-## 要件
+<!---## 要件
 
 ### タイトル
 
@@ -208,4 +208,4 @@
 - API
   - Gemini, OpenAI
 - DB
-  - MySQL
+  - MySQL--->
