@@ -48,3 +48,46 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Gallery Slider カスタムスタイル */
+.gallery-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #10b981; /* emerald-500 */
+  cursor: pointer;
+  border-radius: 9999px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.gallery-slider::-webkit-slider-thumb:hover {
+  background-color: #059669; /* emerald-600 */
+  transform: scale(1.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-slider::-moz-range-thumb {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #10b981; /* emerald-500 */
+  cursor: pointer;
+  border-radius: 9999px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.gallery-slider::-moz-range-thumb:hover {
+  background-color: #059669; /* emerald-600 */
+  transform: scale(1.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-slider::-webkit-slider-runnable-track {
+  background: transparent;
+}
+
+.gallery-slider::-moz-range-track {
+  background: transparent;
+}

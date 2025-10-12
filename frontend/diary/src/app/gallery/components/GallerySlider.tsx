@@ -83,18 +83,14 @@ export default function GallerySlider({
               onTouchStart={() => setIsInteracting(true)}
               onTouchEnd={() => { setIsInteracting(false); setHoveredIndex(null); }}
               onTouchMove={handleTouchMove}
-              className="w-full h-3 bg-blue-200 rounded-lg appearance-none cursor-pointer slider"
-              style={{
-                accentColor: '#3b82f6'
-              }}
+              className="gallery-slider w-full h-3 bg-emerald-200 rounded-lg appearance-none cursor-pointer transition-all"
             />
 
             {/* current/hover date label that follows the thumb */}
             <div
-              className="pointer-events-none absolute -top-10"
+              className="pointer-events-none absolute -top-10 -translate-x-1/2"
               style={{
-                left: `${labelLeftPercent}%`,
-                transform: 'translateX(-50%)'
+                left: `${labelLeftPercent}%`
               }}
             >
               <span className="text-sm font-semibold text-gray-700 bg-white px-3 py-1 rounded whitespace-nowrap shadow-md">
@@ -104,15 +100,6 @@ export default function GallerySlider({
               </span>
             </div>
           </div>
-{/* 
-          <div className="flex justify-between mt-8">
-            <span className="text-xs text-gray-500">
-              {dates.length > 0 ? formatDateToSimpleJapanese(dates[0]) : ''}
-            </span>
-            <span className="text-xs text-gray-500">
-              {dates.length > 0 ? formatDateToSimpleJapanese(dates[dates.length - 1]) : ''}
-            </span>
-          </div> */}
         </div>
         <div className="text-center">
           <div className="text-sm font-medium text-gray-700 whitespace-nowrap mb-1">現在</div>
@@ -121,39 +108,6 @@ export default function GallerySlider({
           </div>
         </div>
       </div>
-
-      {/* スタイル */}
-      <style jsx>{`
-        .slider::-webkit-slider-thumb {
-          appearance: none;
-          width: 24px;
-          height: 24px;
-          background: #3b82f6;
-          cursor: pointer;
-          border-radius: 50%;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .slider::-webkit-slider-thumb:hover {
-          background: #2563eb;
-          transform: scale(1.1);
-        }
-
-        .slider::-moz-range-thumb {
-          width: 24px;
-          height: 24px;
-          background: #3b82f6;
-          cursor: pointer;
-          border-radius: 50%;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-          border: none;
-        }
-
-        .slider::-moz-range-thumb:hover {
-          background: #2563eb;
-          transform: scale(1.1);
-        }
-      `}</style>
     </div>
   );
 }

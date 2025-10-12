@@ -2,9 +2,9 @@ import React from 'react';
 
 export function LoadingState() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500 mx-auto mb-4"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-emerald-500 mx-auto mb-4"></div>
         <p className="text-gray-600 text-lg">読み込み中...</p>
       </div>
     </div>
@@ -13,7 +13,7 @@ export function LoadingState() {
 
 export function ErrorState({ error }: { error: string }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md">
         <div className="text-center">
           <svg
@@ -33,7 +33,7 @@ export function ErrorState({ error }: { error: string }) {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+            className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-6 rounded-lg transition-colors"
           >
             再読み込み
           </button>
@@ -45,7 +45,7 @@ export function ErrorState({ error }: { error: string }) {
 
 export function EmptyState() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md">
         <div className="text-center">
           <svg
