@@ -8,6 +8,17 @@ export interface DiaryEntry {
   createdAt: string;
 }
 
+// 画像データの型定義（APIレスポンス）
+export interface ImageData {
+  uri: string;
+  id: number;
+  user_id: number;
+  diary_id: number;
+  created_at: string;
+  updated_at: string;
+  is_deleted: boolean;
+}
+
 export interface CalendarProps {
   diaryDates: string[];
   selectedDate: string | null;
