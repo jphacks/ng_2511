@@ -1,7 +1,6 @@
 import os
 import time
 
-from dotenv import load_dotenv
 from fastapi import HTTPException
 from google import genai
 
@@ -32,8 +31,6 @@ def generate_diary_score_using_Gemini(diary_body: str) -> int:
     Returns:
         int: 生成されたスコア（-100~100）
     """
-    # .envファイルの読み込み
-    load_dotenv(dotenv_path=".env")
 
     # API-KEYの設定
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -47,9 +44,17 @@ def generate_diary_score_using_Gemini(diary_body: str) -> int:
     while True:
         i += 1
         response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+
+        if not response:
+            raise HTTPException(status_code=502, detail="Gemini response is empty")
+
+        if not response.text:
+            raise HTTPException(status_code=502, detail="Gemini response is empty")
+
         is_correct_response = check_response(response.text)
-        if is_correct_response != False:
+        if is_correct_response:
             break
+
         if i >= 5:
             raise HTTPException(status_code=402, detail="Failed to get response from gemini")
         time.sleep(1)

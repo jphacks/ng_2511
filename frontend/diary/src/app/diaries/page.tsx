@@ -5,6 +5,9 @@ import Link from 'next/link';
 import Calendar from './components/Calendar';
 import DiaryList from './components/DiaryList';
 import { DiaryEntry, fetchDiaries, getDiaryDates, sortDiariesByDate } from './api';
+import { InputDiaryForm } from '../utils';
+import { Diary } from '../static';
+import { formatDateToSimpleJapanese } from '../../utils/dateFormat';
 
 
 // int型日付をYYYY-MM-DD文字列に変換
@@ -13,12 +16,44 @@ function intToDateString(dateInt: number): string {
   return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
 }
 
+
+
 export default function DiariesPage() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [filteredDiaries, setFilteredDiaries] = useState<DiaryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [diary, setDiary] = useState<Diary>({ id: 0, date: "", body: "" });
+  const [isEdit, setIsEdit] = useState(false);
+
+  const fetchDiary = async (date: number | null) => {
+    if (!date) {
+      setDiary({ id: 0, date: "", body: "" });
+      setIsEdit(false);
+      return;
+    }
+    try {
+      const res = await fetch(`http://localhost:8000/api/v1/diaries/date/${date}`, {
+        method: "GET",
+      });
+
+        if (res.status === 404) {
+          setDiary({ id: 0, date: "", body: "" });
+          setIsEdit(false);
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error(`サーバーエラー: ${res.status}`);
+        }
+         
+        const data = await res.json();
+        setDiary(data);
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
 
   useEffect(() => {
     // APIから日記データを取得
@@ -55,6 +90,52 @@ export default function DiariesPage() {
 
   const handleDateSelect = (date: number | null) => {
     setSelectedDate(date);
+    fetchDiary(date);
+    setIsEdit(date !== null);
+  };
+
+  const RightSide = () => {
+    if (selectedDate === null){
+      return (
+        <div>
+        <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-700">
+                日記一覧
+              </h2>
+            </div>
+        <div className="bg-white rounded-lg shadow-md p-6">
+            
+            <DiaryList
+              diaries={filteredDiaries}
+              selectedDate={selectedDate}
+              onDateSelect={handleDateSelect}
+              intToDateString={intToDateString}
+            />
+          </div>
+        </div>
+            );
+    }
+    else{
+      return (
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-700">
+            {formatDateToSimpleJapanese(selectedDate)}の日記を{isEdit ? "編集" : "作成"}中
+            </h2> 
+          {selectedDate && (
+            <button
+                  onClick={() => handleDateSelect(null)}
+                  className="text-sm text-blue-600 hover:text-blue-800 underline"
+                >
+                  すべて表示
+                </button>
+              )}
+            </div>
+          
+          <InputDiaryForm diary={diary} isEdit={isEdit} />
+        </div>
+      );
+    }
   };
 
   if (loading) {
@@ -97,15 +178,6 @@ export default function DiariesPage() {
           <h1 className="text-3xl font-bold text-gray-800">
             日記一覧
           </h1>
-          <Link
-            href="/create"
-            className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            新しい日記を作成
-          </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -123,25 +195,7 @@ export default function DiariesPage() {
 
           {/* 右側: 日記一覧 */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-700">
-                日記一覧
-              </h2>
-              {selectedDate && (
-                <button
-                  onClick={() => handleDateSelect(null)}
-                  className="text-sm text-blue-600 hover:text-blue-800 underline"
-                >
-                  すべて表示
-                </button>
-              )}
-            </div>
-            <DiaryList
-              diaries={filteredDiaries}
-              selectedDate={selectedDate}
-              onDateSelect={handleDateSelect}
-              intToDateString={intToDateString}
-            />
+            <RightSide />
           </div>
         </div>
       </div>

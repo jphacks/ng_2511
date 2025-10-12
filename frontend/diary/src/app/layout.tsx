@@ -76,13 +76,6 @@ function Header() {
             {open && (
               <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-md py-2">
                 <Link
-                  href="/create"
-                  className="block px-4 py-2 text-sm hover:bg-gray-100"
-                  onClick={() => setOpen(false)}
-                >
-                  新しい日記を書く
-                </Link>
-                <Link
                   href="/diaries"
                   className="block px-4 py-2 text-sm hover:bg-gray-100"
                   onClick={() => setOpen(false)}

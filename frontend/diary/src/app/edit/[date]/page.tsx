@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import HomePage from "../../create/page";
-import { Diary } from "./type";
+import { Diary } from "../../static";
 
 function intToDateString(dateInt: number): string {
   const s = dateInt.toString();
