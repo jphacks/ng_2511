@@ -6,6 +6,16 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { devUserImage } from "./static";
 
+type ImageResponse = {
+  uri: string;
+  id: number;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  is_deleted: boolean;
+};
+
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
@@ -19,26 +29,20 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
 function Header() {
   const [open, setOpen] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const user_id = 1; // 仮のユーザーID
 
   // 画像を取得
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        const res = await fetch("/image", { method: "GET" });
-        // if (!res.ok) throw new Error("画像取得に失敗しました");
-        if (!res.ok){
-          // 開発環境ならdevUserImageを使う
-          const url = devUserImage;
-          setImageUrl(url);
-          return;
-        }
+        const res = await fetch(`http://localhost:8000/api/v1/images?user_id=1`, { method: "GET" });
+        if (!res.ok) throw new Error("画像取得に失敗しました");
 
         // 画像のURLを生成（Blob → object URL）
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        
-        setImageUrl(url);
+        const data: ImageResponse = await res.json();
+        setImageUri(data.uri);
+
       } catch (err) {
         console.error(err);
       }
@@ -76,13 +80,6 @@ function Header() {
             {open && (
               <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-md py-2">
                 <Link
-                  href="/create"
-                  className="block px-4 py-2 text-sm hover:bg-gray-100"
-                  onClick={() => setOpen(false)}
-                >
-                  新しい日記を書く
-                </Link>
-                <Link
                   href="/diaries"
                   className="block px-4 py-2 text-sm hover:bg-gray-100"
                   onClick={() => setOpen(false)}
@@ -94,9 +91,9 @@ function Header() {
           </div>
 
           {/* 取得した画像を表示 */}
-          {imageUrl ? (
+          {imageUri ? (
             <img
-              src={imageUrl}
+              src={imageUri}
               alt="ユーザー画像"
               className="w-10 h-10 rounded-full border object-cover"
             />

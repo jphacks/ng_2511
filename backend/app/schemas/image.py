@@ -1,6 +1,7 @@
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
-from app.models.user import User
+
 
 class ImageBase(BaseModel):
     """Image共通のベーススキーマ
@@ -29,5 +30,19 @@ class ImageOut(ImageBase):
     created_at: datetime | None
     updated_at: datetime | None
     is_deleted: bool
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ImageCreateOut(BaseModel):
+    """レスポンス用スキーマ（Image作成）
+
+    ImageCreateOut はサーバーがクライアントに返す日記表現を定義します。
+    DB の主キー `id` や、内部でのみ管理しているフィールドをここに含めます。
+
+    column情報は全部返す
+    """
+
+    image_url: str
 
     model_config = ConfigDict(from_attributes=True)
